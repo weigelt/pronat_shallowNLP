@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>edu.kit.ipd.parse</groupId>
-            <artifactId>PARSEGraph</artifactId>
+            <artifactId>luna</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 		<dependency>

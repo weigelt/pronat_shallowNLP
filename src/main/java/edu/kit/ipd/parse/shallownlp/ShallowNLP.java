@@ -10,11 +10,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.PARSEGraph.ParseArc;
-import edu.kit.ipd.parse.PARSEGraph.ParseArcType;
-import edu.kit.ipd.parse.PARSEGraph.ParseGraph;
-import edu.kit.ipd.parse.PARSEGraph.ParseNode;
-import edu.kit.ipd.parse.PARSEGraph.ParseNodeType;
+import edu.kit.ipd.parse.luna.graph.ParseArc;
+import edu.kit.ipd.parse.luna.graph.ParseArcType;
+import edu.kit.ipd.parse.luna.graph.ParseGraph;
+import edu.kit.ipd.parse.luna.graph.ParseNode;
+import edu.kit.ipd.parse.luna.graph.ParseNodeType;
 import edu.kit.ipd.parse.parsebios.Facade;
 
 /**
