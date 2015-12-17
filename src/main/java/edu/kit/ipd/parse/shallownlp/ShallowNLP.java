@@ -260,7 +260,7 @@ public class ShallowNLP {
 
 		for (int i = 0; i < nodes.length; i++) {
 			if (i < nodes.length - 1) {
-				ParseArc arc = graph.createArc(arcType, nodes[i], nodes[i + 1]);
+				ParseArc arc = graph.createArc(nodes[i], nodes[i + 1], arcType);
 				arc.setAttributeValue("value", "NEXT");
 			}
 		}
