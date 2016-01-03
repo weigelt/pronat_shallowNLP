@@ -291,6 +291,7 @@ public class ShallowNLP implements IPipelineStage {
 
 		Token[] tokens;
 
+		//try to get data as pre pipeline data. If this fails, return
 		try {
 			prePipeData = data.asPrePipelineData();
 		} catch (PipelineDataCastException e) {
@@ -299,6 +300,7 @@ public class ShallowNLP implements IPipelineStage {
 			return;
 		}
 
+		// try to process on utterance array
 		try {
 			String[] utterances = prePipeData.getTranscriptions();
 			tokens = parse(utterances, true, false, null);
@@ -308,6 +310,7 @@ public class ShallowNLP implements IPipelineStage {
 			logger.info("No utterance array to process, trying single input instead...");
 		}
 
+		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
 		try {
 			String utterance = prePipeData.getTranscription();
 			tokens = parse(utterance, false, true, false, null);
