@@ -10,11 +10,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.ipd.parse.luna.data.AbstractPipelineData;
+import edu.kit.ipd.parse.luna.data.MissingDataException;
+import edu.kit.ipd.parse.luna.data.PipelineDataCastException;
+import edu.kit.ipd.parse.luna.data.PrePipelineData;
 import edu.kit.ipd.parse.luna.graph.ParseArc;
 import edu.kit.ipd.parse.luna.graph.ParseArcType;
 import edu.kit.ipd.parse.luna.graph.ParseGraph;
 import edu.kit.ipd.parse.luna.graph.ParseNode;
 import edu.kit.ipd.parse.luna.graph.ParseNodeType;
+import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
 import edu.kit.ipd.parse.parsebios.Facade;
 
 /**
@@ -25,9 +30,13 @@ import edu.kit.ipd.parse.parsebios.Facade;
  * @author Markus Kocybik
  *
  */
-public class ShallowNLP {
+public class ShallowNLP implements IPipelineStage {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShallowNLP.class);
+
+	private static final String ID = "snlp";
+
+	private PrePipelineData prePipeData;
 
 	/**
 	 * These fillers will be cut out off from the input text
@@ -265,5 +274,49 @@ public class ShallowNLP {
 			}
 		}
 		return graph;
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public String getID() {
+		return ID;
+	}
+
+	@Override
+	public void exec(AbstractPipelineData data) {
+
+		Token[] tokens;
+
+		try {
+			prePipeData = data.asPrePipelineData();
+		} catch (PipelineDataCastException e) {
+			logger.error(e.toString());
+			logger.info("Cannot process on data");
+			return;
+		}
+
+		try {
+			String[] utterances = prePipeData.getTranscriptions();
+			tokens = parse(utterances, true, false, null);
+			prePipeData.setGraph(createAGGGraph(tokens));
+			return;
+		} catch (MissingDataException e) {
+			logger.info("No utterance array to process, trying single input instead...");
+		}
+
+		try {
+			String utterance = prePipeData.getTranscription();
+			tokens = parse(utterance, false, true, false, null);
+			prePipeData.setGraph(createAGGGraph(tokens));
+			return;
+		} catch (MissingDataException e) {
+			logger.error("No utterance to process, abborting...");
+			return;
+		}
+
 	}
 }
