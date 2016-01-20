@@ -310,6 +310,7 @@ public class ShallowNLP implements IPipelineStage {
 		try {
 			String[] utterances = prePipeData.getTranscriptions();
 			tokens = parse(utterances, true, false, null);
+			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
 		} catch (MissingDataException e) {
@@ -320,6 +321,7 @@ public class ShallowNLP implements IPipelineStage {
 		try {
 			String utterance = prePipeData.getTranscription();
 			tokens = parse(utterance, false, true, false, null);
+			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
 		} catch (MissingDataException e) {
