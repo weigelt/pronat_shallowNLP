@@ -8,14 +8,14 @@ import org.junit.Test;
 import edu.kit.ipd.parse.luna.data.MissingDataException;
 import edu.kit.ipd.parse.luna.data.PrePipelineData;
 import edu.kit.ipd.parse.luna.data.token.Token;
-import edu.kit.ipd.parse.luna.graph.GraphInterface;
+import edu.kit.ipd.parse.luna.graph.IGraph;
 
 public class IntegrationTest {
 
 	ShallowNLP snlp;
 	String input;
 	Token[] actual;
-	GraphInterface graph;
+	IGraph graph;
 
 	@Before
 	public void setUp() {
