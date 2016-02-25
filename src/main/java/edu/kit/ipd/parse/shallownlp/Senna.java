@@ -9,6 +9,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -67,15 +68,19 @@ public class Senna {
 	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, String input, String output) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
 		ProcessBuilder pb;
+		List<String> command = new ArrayList<String>();
 		if (os.contains("darwin") || os.contains("mac")) {
-			pb = new ProcessBuilder(resourcePath.toString() + "/senna-osx");
+			command.add(resourcePath.toString() + "/senna-osx");
 		} else if (os.contains("nux")) {
-			pb = new ProcessBuilder(resourcePath.toString() + "/senna-linux64");
+			command.add(resourcePath.toString() + "/senna-linux64");
 		} else if (os.contains("win") && System.getenv("ProgramFiles(x86)") != null) {
-			pb = new ProcessBuilder(resourcePath.toString() + "/senna.exe");
+			command.add(resourcePath.toString() + "/senna.exe");
 		} else {
-			pb = new ProcessBuilder(resourcePath.toString() + "/senna-win32.exe");
+			command.add(resourcePath.toString() + "/senna-win32.exe");
 		}
+		command.addAll(Arrays.asList(options));
+		logger.trace("Call:", command.toString());
+		pb = new ProcessBuilder(command);
 		pb.redirectInput(new File(input));
 		pb.redirectOutput(new File(output));
 		pb.directory(new File(resourcePath.toString()));
