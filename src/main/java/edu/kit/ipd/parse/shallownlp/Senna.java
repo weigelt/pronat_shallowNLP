@@ -51,19 +51,12 @@ public class Senna {
 	 * @param resourcePath
 	 *            the path where Senna is located
 	 * @param options
-	 *            the options to pass, normally just ["-usrtokens"]
+	 *            the options to pass, normally just ["-usrtokens","-pos"]
 	 * @param input
 	 *            the path of the file used as input file
 	 * @param output
 	 *            the path of the file used as output file
 	 * @return the process Senna runs in
-	 */
-	/**
-	 * @param resourcePath
-	 * 
-	 * @param input
-	 * @param output
-	 * @return
 	 */
 	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, String input, String output) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
