@@ -10,9 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
 /**
  * This class represents a facade for SENNA
@@ -24,6 +27,11 @@ import org.slf4j.LoggerFactory;
 public class Senna {
 
 	private static final Logger logger = LoggerFactory.getLogger(Senna.class);
+	Properties props;
+
+	public Senna() {
+		props = ConfigManager.getConfiguration(getClass());
+	}
 
 	/**
 	 * This method excecutes SENNA as a seperate process. This method is only
@@ -41,13 +49,22 @@ public class Senna {
 	 * 
 	 * @param resourcePath
 	 *            the path where Senna is located
+	 * @param options
+	 *            the options to pass, normally just ["-usrtokens"]
 	 * @param input
 	 *            the path of the file used as input file
 	 * @param output
 	 *            the path of the file used as output file
 	 * @return the process Senna runs in
 	 */
-	private ProcessBuilder createSennaProcess(Path resourcePath, String input, String output) {
+	/**
+	 * @param resourcePath
+	 * 
+	 * @param input
+	 * @param output
+	 * @return
+	 */
+	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, String input, String output) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
 		ProcessBuilder pb;
 		if (os.contains("darwin") || os.contains("mac")) {
@@ -72,9 +89,7 @@ public class Senna {
 		try {
 			URL resourceUrl = getClass().getResource("/senna");
 			Path resourcePath = Paths.get(resourceUrl.toURI());
-			//Process p = Runtime.getRuntime().exec("cmd /c start /wait /d \"" 
-			//				+ resourcePath.toString() + "\" test.bat " + input + " " + output);
-			ProcessBuilder builder = createSennaProcess(resourcePath, input, output);
+			ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), input, output);
 			Process p = builder.start();
 			if (p.waitFor() != 0) {
 				String error;
