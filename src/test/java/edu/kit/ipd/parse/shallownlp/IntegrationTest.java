@@ -24,7 +24,7 @@ public class IntegrationTest {
 
 	@Test
 	public void showSingleStringOutput() {
-		input = "Armar go to the fridge";
+		input = "Armar go to the fridge.";
 		actual = snlp.parse(input, false, true, true, null);
 		System.out.println(Arrays.deepToString(actual));
 		graph = snlp.createAGGGraph(actual);
@@ -43,6 +43,15 @@ public class IntegrationTest {
 		}
 		graph.showGraph();
 
+	}
+
+	@Test
+	public void showUsrTokensOutput() {
+		input = "Armar go to the fridge .";
+		actual = snlp.parse(input, false, true, true, null);
+		System.out.println(Arrays.deepToString(actual));
+		graph = snlp.createAGGGraph(actual);
+		System.out.println(graph.showGraph());
 	}
 
 }
