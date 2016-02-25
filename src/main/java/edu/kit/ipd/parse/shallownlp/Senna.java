@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
  * This class represents a facade for SENNA
  * 
  * @author Markus Kocybik
+ * @author Sven Scheu - revised code on 24-02-2016
+ * @author Sebastian Weigelt - revised code on 26-02-2016
  */
 public class Senna {
 
@@ -34,6 +36,14 @@ public class Senna {
 		return readFile(output);
 	}
 
+	/**
+	 * Creates
+	 * 
+	 * @param resourcePath
+	 * @param input
+	 * @param output
+	 * @return
+	 */
 	private ProcessBuilder createSennaProcess(Path resourcePath, String input, String output) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
 		ProcessBuilder pb;
