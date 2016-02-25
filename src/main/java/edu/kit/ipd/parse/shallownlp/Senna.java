@@ -37,12 +37,15 @@ public class Senna {
 	}
 
 	/**
-	 * Creates
+	 * Creates the process to run Senna
 	 * 
 	 * @param resourcePath
+	 *            the path where Senna is located
 	 * @param input
+	 *            the path of the file used as input file
 	 * @param output
-	 * @return
+	 *            the path of the file used as output file
+	 * @return the process Senna runs in
 	 */
 	private ProcessBuilder createSennaProcess(Path resourcePath, String input, String output) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
