@@ -30,6 +30,9 @@ public class Senna {
 	private static final Logger logger = LoggerFactory.getLogger(Senna.class);
 	Properties props;
 
+	/**
+	 * Default Constructor that simply reads the Properties
+	 */
 	public Senna() {
 		props = ConfigManager.getConfiguration(getClass());
 	}
