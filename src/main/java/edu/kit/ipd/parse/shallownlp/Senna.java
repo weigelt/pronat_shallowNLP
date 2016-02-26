@@ -44,7 +44,7 @@ public class Senna {
 	 * @param tempFile
 	 * @throws IOException
 	 */
-	public WordPosType parse(File tempInputFile) throws IOException {
+	WordPosType parse(File tempInputFile) throws IOException {
 		File outputFile = excecuteSenna(tempInputFile);
 		return readFile(outputFile);
 	}
