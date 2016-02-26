@@ -173,7 +173,7 @@ public class ShallowNLP implements IPipelineStage {
 
 		int[] instr = new int[words.length];
 		if (imp)
-			instr = new CalcInstruction().CalculateInstructionNumber(words, pos);
+			instr = new CalcInstruction().calculateInstructionNumber(words, pos);
 
 		return createTokens(words, pos, instr, chunks);
 	}
@@ -214,7 +214,7 @@ public class ShallowNLP implements IPipelineStage {
 
 		int[] instr = new int[words.length];
 		if (imp)
-			instr = new CalcInstruction().CalculateInstructionNumber(words, pos);
+			instr = new CalcInstruction().calculateInstructionNumber(words, pos);
 
 		return createTokens(words, pos, instr, chunks);
 	}

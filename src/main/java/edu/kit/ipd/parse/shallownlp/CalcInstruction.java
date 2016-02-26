@@ -22,7 +22,7 @@ public class CalcInstruction {
 	 *             throws an exception if word aaray and pos array have
 	 *             different lengths
 	 */
-	public int[] CalculateInstructionNumber(String[] words, String[] pos) throws IllegalArgumentException {
+	public int[] calculateInstructionNumber(String[] words, String[] pos) throws IllegalArgumentException {
 		if (words.length == pos.length) {
 			int[] list = new int[words.length];
 			int instrNr = 0;
