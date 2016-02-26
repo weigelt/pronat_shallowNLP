@@ -126,11 +126,7 @@ public class Senna {
 				throw e;
 			} finally {
 				if (br != null) {
-					try {
-						br.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					br.close();
 				}
 			}
 			error = sb.toString();
@@ -145,23 +141,24 @@ public class Senna {
 	 * @param outputFile
 	 *            of the file
 	 * @return the parse result of SENNA
+	 * @throws IOException
+	 *             throws exception if something during creation or usage of the
+	 *             buffered reader for the output file goes wrong
 	 */
-	//TODO error handling
-	private WordPosType readFile(File outputFile) {
+	private WordPosType readFile(File outputFile) throws IOException {
 		List<String> words = new ArrayList<String>();
 		List<String> pos = new ArrayList<String>();
-		try (BufferedReader br = new BufferedReader(new FileReader(outputFile))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (!line.trim().equals("")) {
-					String[] tokens = line.trim().split("\\s+");
-					words.add(tokens[0]);
-					pos.add(tokens[1]);
-				}
+		BufferedReader br = new BufferedReader(new FileReader(outputFile));
+		String line;
+		while ((line = br.readLine()) != null) {
+			if (!line.trim().equals("")) {
+				String[] tokens = line.trim().split("\\s+");
+				words.add(tokens[0]);
+				pos.add(tokens[1]);
 			}
-		} catch (IOException e) {
-			logger.error("Something went wrong");
-			;
+		}
+		if (br != null) {
+			br.close();
 		}
 		return new WordPosType(words.toArray(new String[words.size()]), pos.toArray(new String[pos.size()]));
 	}
