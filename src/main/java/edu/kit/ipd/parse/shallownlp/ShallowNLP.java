@@ -21,7 +21,11 @@ import edu.kit.ipd.parse.luna.data.token.Chunk;
 import edu.kit.ipd.parse.luna.data.token.ChunkIOB;
 import edu.kit.ipd.parse.luna.data.token.POSTag;
 import edu.kit.ipd.parse.luna.data.token.Token;
-import edu.kit.ipd.parse.luna.graph.ParseArc;
+import edu.kit.ipd.parse.luna.graph.IArc;
+import edu.kit.ipd.parse.luna.graph.IArcType;
+import edu.kit.ipd.parse.luna.graph.IGraph;
+import edu.kit.ipd.parse.luna.graph.INode;
+import edu.kit.ipd.parse.luna.graph.INodeType;
 import edu.kit.ipd.parse.luna.graph.ParseArcType;
 import edu.kit.ipd.parse.luna.graph.ParseGraph;
 import edu.kit.ipd.parse.luna.graph.ParseNode;
@@ -53,6 +57,11 @@ public class ShallowNLP implements IPipelineStage {
 
 	private static List<String> fillers;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see edu.kit.ipd.parse.luna.pipeline.IPipelineStage#init()
+	 */
 	@Override
 	public void init() {
 		props = ConfigManager.getConfiguration(getClass());
@@ -277,10 +286,10 @@ public class ShallowNLP implements IPipelineStage {
 	 *            location to save the AGG-Graph.
 	 * @return the AGG-Graph
 	 */
-	public ParseGraph createAGGGraph(Token[] input) {
-		ParseGraph graph = new ParseGraph();
-		ParseNodeType wordType = new ParseNodeType("token");
-		ParseArcType arcType = new ParseArcType("relation");
+	public IGraph createAGGGraph(Token[] input) {
+		IGraph graph = new ParseGraph();
+		INodeType wordType = new ParseNodeType("token");
+		IArcType arcType = new ParseArcType("relation");
 
 		wordType.addAttributeToType("String", "value");
 		wordType.addAttributeToType("String", "pos");
@@ -292,9 +301,9 @@ public class ShallowNLP implements IPipelineStage {
 		wordType.addAttributeToType("int", "position");
 		arcType.addAttributeToType("String", "value");
 
-		ParseNode[] nodes = new ParseNode[input.length];
+		INode[] nodes = new ParseNode[input.length];
 		for (Token tok : input) {
-			ParseNode node = graph.createNode(wordType);
+			INode node = graph.createNode(wordType);
 			node.setAttributeValue("value", tok.getWord());
 			node.setAttributeValue("pos", tok.getPos().toString());
 			node.setAttributeValue("chunkIOB", tok.getChunkIOB().toString());
@@ -308,7 +317,7 @@ public class ShallowNLP implements IPipelineStage {
 
 		for (int i = 0; i < nodes.length; i++) {
 			if (i < nodes.length - 1) {
-				ParseArc arc = graph.createArc(nodes[i], nodes[i + 1], arcType);
+				IArc arc = graph.createArc(nodes[i], nodes[i + 1], arcType);
 				arc.setAttributeValue("value", "NEXT");
 			}
 		}
