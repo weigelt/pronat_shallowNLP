@@ -69,10 +69,10 @@ public class ShallowNLP implements IPipelineStage {
 		imp = Boolean.parseBoolean(props.getProperty("IMPERATIVE"));
 		containPeriods = Boolean.parseBoolean(props.getProperty("PERIODS"));
 		excludeFillers = Boolean.parseBoolean(props.getProperty("EXCLUDE_FILLERS"));
-		opt = props.getProperty("EXCLUDE_FILLERS").equals("sennaandstanford");
+		opt = props.getProperty("MODE").equals("sennaandstanford");
 		fillers = new ArrayList<String>();
 		if (excludeFillers) {
-			fillers.addAll(Arrays.asList(props.getProperty("EXCLUDE_FILLERS").split(",")));
+			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
 		}
 	}
 
