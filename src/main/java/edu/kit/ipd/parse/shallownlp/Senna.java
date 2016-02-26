@@ -42,8 +42,6 @@ public class Senna {
 	 * @throws IOException
 	 */
 	public WordPosType parse(File tempInputFile) throws IOException {
-		//String input = ResourceReader.getURL(this, "input.txt");
-		//String output = ResourceReader.getURL(this, "output.txt");
 		File outputFile = excecuteSenna(tempInputFile);
 		return readFile(outputFile);
 	}
