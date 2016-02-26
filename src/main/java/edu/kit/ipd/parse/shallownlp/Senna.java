@@ -42,7 +42,9 @@ public class Senna {
 	 * executable on a Windows machine.
 	 * 
 	 * @param tempFile
+	 *            the temporary input file to use
 	 * @throws IOException
+	 *             throws exception if something within file handling goes wrong
 	 */
 	WordPosType parse(File tempInputFile) throws IOException {
 		File outputFile = excecuteSenna(tempInputFile);
@@ -75,7 +77,7 @@ public class Senna {
 			command.add(resourcePath.toString() + "/senna-win32.exe");
 		}
 		command.addAll(Arrays.asList(options));
-		logger.trace("Call:", command.toString());
+		logger.trace("Calling the process builder with: {}", command.toString());
 		pb = new ProcessBuilder(command);
 		pb.redirectInput(tempInputFile);
 		pb.redirectOutput(tempOutputFile);
