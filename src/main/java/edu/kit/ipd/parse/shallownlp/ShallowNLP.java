@@ -1,8 +1,8 @@
 package edu.kit.ipd.parse.shallownlp;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,8 +81,10 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param verbList
 	 *            fix list of words which should be tagged as verbs is only used
 	 *            if the parameter opt is true
+	 * @throws IOException
 	 */
-	public Token[] parse(String text, boolean containPeriods, boolean opt, boolean imp, WordPosType list) {
+	public Token[] parse(String text, boolean containPeriods, boolean opt, boolean imp, WordPosType list) throws IOException {
+		File tempFile;
 		String[] input;
 		if (!containPeriods) {
 			input = new String[] { text };
@@ -91,8 +93,8 @@ public class ShallowNLP implements IPipelineStage {
 			input = new Stanford().splitSentence(text);
 			opt = false;
 		}
-		writeToFile(input);
-		return shallowNLP(opt, imp, list);
+		tempFile = writeToTempFile(input);
+		return shallowNLP(opt, imp, list, tempFile);
 	}
 
 	/**
@@ -109,10 +111,11 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param verbList
 	 *            fix list of words which should be tagged as verb, is only used
 	 *            if the parameter opt is true
+	 * @throws IOException
 	 */
-	public Token[] parse(String[] text, boolean opt, boolean imp, WordPosType list) {
-		writeToFile(text);
-		return shallowNLP(opt, imp, list);
+	public Token[] parse(String[] text, boolean opt, boolean imp, WordPosType list) throws IOException {
+		File tempFile = writeToTempFile(text);
+		return shallowNLP(opt, imp, list, tempFile);
 	}
 
 	/**
@@ -121,24 +124,25 @@ public class ShallowNLP implements IPipelineStage {
 	 * 
 	 * @param text
 	 *            the text to parse
+	 * @throws IOException
 	 */
-	private void writeToFile(String[] text) {
+	private File writeToTempFile(String[] text) throws IOException {
 		PrintWriter writer;
-		try {
-			writer = new PrintWriter(ResourceReader.getURL(this, "input.txt"), "UTF-8");
-			for (String line : text) {
-				writer.println(line);
-			}
-			writer.close();
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+		File tempFile = File.createTempFile("input", "txt");
+		writer = new PrintWriter(tempFile);
+		for (String line : text) {
+			writer.println(line);
 		}
+		writer.close();
+		return tempFile;
+
 	}
 
-	private Token[] shallowNLP(boolean opt, boolean imp, WordPosType list) {
+	private Token[] shallowNLP(boolean opt, boolean imp, WordPosType list, File tempFile) throws IOException {
 		if (!opt)
-			return onlySenna(imp);
+			return onlySenna(imp, tempFile);
 		else
-			return sennaAndStanford(imp, list);
+			return sennaAndStanford(imp, list, tempFile);
 	}
 
 	/**
@@ -147,11 +151,13 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param imp
 	 *            is true if the text is composed of imperative sentences, then
 	 *            the instruction number can be calculated
+	 * @param tempFile
 	 * @return a token array which is the result of parsing
+	 * @throws IOException
 	 */
-	private Token[] onlySenna(boolean imp) {
+	private Token[] onlySenna(boolean imp, File tempFile) throws IOException {
 		logger.info("using senna for pos tagging");
-		WordPosType list = new Senna().parse();
+		WordPosType list = new Senna().parse(tempFile);
 		String[] words = list.getWords();
 		String[] posSenna = list.getPos();
 
@@ -181,11 +187,13 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param list
 	 *            fix list of words which should be tagged as verbs is only used
 	 *            if the parameter opt is true
+	 * @param tempFile
 	 * @return a token array which is the result of parsing
+	 * @throws IOException
 	 */
-	private Token[] sennaAndStanford(boolean imp, WordPosType list) {
+	private Token[] sennaAndStanford(boolean imp, WordPosType list, File tempFile) throws IOException {
 		logger.info("using senna and stanford core nlp for pos tagging");
-		WordPosType result = new Senna().parse();
+		WordPosType result = new Senna().parse(tempFile);
 		String[] words = result.getWords();
 		String[] posSenna = result.getPos();
 		String[] posStan = new Stanford().posTag(words);
@@ -315,6 +323,9 @@ public class ShallowNLP implements IPipelineStage {
 			return;
 		} catch (MissingDataException e) {
 			logger.info("No utterance array to process, trying single input instead...");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
@@ -327,6 +338,9 @@ public class ShallowNLP implements IPipelineStage {
 		} catch (MissingDataException e) {
 			logger.error("No utterance to process, abborting...");
 			return;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

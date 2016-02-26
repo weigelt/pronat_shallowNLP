@@ -37,12 +37,15 @@ public class Senna {
 	/**
 	 * This method excecutes SENNA as a seperate process. This method is only
 	 * executable on a Windows machine.
+	 * 
+	 * @param tempFile
+	 * @throws IOException
 	 */
-	public WordPosType parse() {
-		String input = ResourceReader.getURL(this, "input.txt");
-		String output = ResourceReader.getURL(this, "output.txt");
-		this.excecuteSenna(input, output);
-		return readFile(output);
+	public WordPosType parse(File tempInputFile) throws IOException {
+		//String input = ResourceReader.getURL(this, "input.txt");
+		//String output = ResourceReader.getURL(this, "output.txt");
+		File outputFile = excecuteSenna(tempInputFile);
+		return readFile(outputFile);
 	}
 
 	/**
@@ -52,13 +55,12 @@ public class Senna {
 	 *            the path where Senna is located
 	 * @param options
 	 *            the options to pass, normally just ["-usrtokens","-pos"]
-	 * @param input
+	 * @param tempInputFile
 	 *            the path of the file used as input file
-	 * @param output
-	 *            the path of the file used as output file
+	 * @param tempOutputFile
 	 * @return the process Senna runs in
 	 */
-	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, String input, String output) {
+	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, File tempInputFile, File tempOutputFile) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
 		ProcessBuilder pb;
 		List<String> command = new ArrayList<String>();
@@ -74,20 +76,26 @@ public class Senna {
 		command.addAll(Arrays.asList(options));
 		logger.trace("Call:", command.toString());
 		pb = new ProcessBuilder(command);
-		pb.redirectInput(new File(input));
-		pb.redirectOutput(new File(output));
+		pb.redirectInput(tempInputFile);
+		pb.redirectOutput(tempOutputFile);
 		pb.directory(new File(resourcePath.toString()));
 		return pb;
 	}
 
 	/**
 	 * This method executes SENNA with the windows terminal
+	 * 
+	 * @return
+	 * 
+	 * @throws IOException
 	 */
-	private void excecuteSenna(String input, String output) {
+	private File excecuteSenna(File tempInputFile) throws IOException {
+		File tempOutputFile = File.createTempFile("output", "txt");
 		try {
 			URL resourceUrl = getClass().getResource("/senna");
 			Path resourcePath = Paths.get(resourceUrl.toURI());
-			ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), input, output);
+			ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), tempInputFile,
+					tempOutputFile);
 			Process p = builder.start();
 			if (p.waitFor() != 0) {
 				String error;
@@ -119,19 +127,21 @@ public class Senna {
 			logger.error("Error: Parsing with SENNA failed");
 			logger.error(e.getMessage());
 		}
+		return tempOutputFile;
 	}
 
 	/**
 	 * This method reads the parse result of SENNA.
 	 * 
-	 * @param path
+	 * @param outputFile
 	 *            of the file
 	 * @return the parse result of SENNA
 	 */
-	private WordPosType readFile(String path) {
+	//TODO error handling
+	private WordPosType readFile(File outputFile) {
 		List<String> words = new ArrayList<String>();
 		List<String> pos = new ArrayList<String>();
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(outputFile))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (!line.trim().equals("")) {

@@ -1,5 +1,6 @@
 package edu.kit.ipd.parse.shallownlp;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -25,7 +26,12 @@ public class IntegrationTest {
 	@Test
 	public void showSingleStringOutput() {
 		input = "Armar go to the fridge.";
-		actual = snlp.parse(input, false, true, true, null);
+		try {
+			actual = snlp.parse(input, false, true, true, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(Arrays.deepToString(actual));
 		graph = snlp.createAGGGraph(actual);
 		graph.showGraph();
@@ -48,7 +54,12 @@ public class IntegrationTest {
 	@Test
 	public void showUsrTokensOutput() {
 		input = "Armar go to the fridge .";
-		actual = snlp.parse(input, false, true, true, null);
+		try {
+			actual = snlp.parse(input, false, true, true, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(Arrays.deepToString(actual));
 		graph = snlp.createAGGGraph(actual);
 		System.out.println(graph.showGraph());
