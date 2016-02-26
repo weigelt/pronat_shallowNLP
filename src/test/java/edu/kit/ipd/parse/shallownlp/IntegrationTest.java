@@ -28,7 +28,7 @@ public class IntegrationTest {
 	public void showSingleStringOutput() {
 		input = "Armar go to the fridge.";
 		try {
-			actual = snlp.parse(input, false, true, true, null);
+			actual = snlp.parse(input, null);
 		} catch (IOException | URISyntaxException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class IntegrationTest {
 	public void showUsrTokensOutput() {
 		input = "Armar go to the fridge .";
 		try {
-			actual = snlp.parse(input, false, true, true, null);
+			actual = snlp.parse(input, null);
 		} catch (IOException | URISyntaxException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

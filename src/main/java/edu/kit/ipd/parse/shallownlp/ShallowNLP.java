@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import edu.kit.ipd.parse.luna.graph.ParseGraph;
 import edu.kit.ipd.parse.luna.graph.ParseNode;
 import edu.kit.ipd.parse.luna.graph.ParseNodeType;
 import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.kit.ipd.parse.parsebios.Facade;
 
 /**
@@ -45,23 +47,24 @@ public class ShallowNLP implements IPipelineStage {
 
 	private PrePipelineData prePipeData;
 
-	/**
-	 * These fillers will be cut out off from the input text
-	 */
-	private static final List<String> fillers = new ArrayList<String>() {
-		{
-			add("ah");
-			add("eh");
-			add("er");
-			add("ehm");
-			add("em");
-			add("hm");
-			add("hmm");
-			add("uh");
-			add("um");
-			add("uhm");
+	private Properties props;
+
+	private boolean imp, opt, containPeriods, excludeFillers;
+
+	private static List<String> fillers;
+
+	@Override
+	public void init() {
+		props = ConfigManager.getConfiguration(getClass());
+		imp = Boolean.parseBoolean(props.getProperty("IMPERATIVE"));
+		containPeriods = Boolean.parseBoolean(props.getProperty("PERIODS"));
+		excludeFillers = Boolean.parseBoolean(props.getProperty("EXCLUDE_FILLERS"));
+		opt = props.getProperty("EXCLUDE_FILLERS").equals("sennaandstanford");
+		fillers = new ArrayList<String>();
+		if (excludeFillers) {
+			fillers.addAll(Arrays.asList(props.getProperty("EXCLUDE_FILLERS").split(",")));
 		}
-	};
+	}
 
 	/**
 	 * This method parses a text which contains multiple sentences. The text can
@@ -86,8 +89,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	public Token[] parse(String text, boolean containPeriods, boolean opt, boolean imp, WordPosType list) throws IOException,
-			URISyntaxException, InterruptedException {
+	public Token[] parse(String text, WordPosType list) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile;
 		String[] input;
 		if (!containPeriods) {
@@ -98,7 +100,7 @@ public class ShallowNLP implements IPipelineStage {
 			opt = false;
 		}
 		tempFile = writeToTempFile(input);
-		return shallowNLP(opt, imp, list, tempFile);
+		return shallowNLP(list, tempFile);
 	}
 
 	/**
@@ -119,10 +121,9 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	public Token[] parse(String[] text, boolean opt, boolean imp, WordPosType list) throws IOException, URISyntaxException,
-			InterruptedException {
+	public Token[] parse(String[] text, WordPosType list) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile = writeToTempFile(text);
-		return shallowNLP(opt, imp, list, tempFile);
+		return shallowNLP(list, tempFile);
 	}
 
 	/**
@@ -145,12 +146,11 @@ public class ShallowNLP implements IPipelineStage {
 
 	}
 
-	private Token[] shallowNLP(boolean opt, boolean imp, WordPosType list, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
+	private Token[] shallowNLP(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		if (!opt)
-			return onlySenna(imp, tempFile);
+			return onlySenna(tempFile);
 		else
-			return sennaAndStanford(imp, list, tempFile);
+			return sennaAndStanford(list, tempFile);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private Token[] onlySenna(boolean imp, File tempFile) throws IOException, URISyntaxException, InterruptedException {
+	private Token[] onlySenna(File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna for pos tagging");
 		WordPosType list = new Senna().parse(tempFile);
 		String[] words = list.getWords();
@@ -210,8 +210,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private Token[] sennaAndStanford(boolean imp, WordPosType list, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
+	private Token[] sennaAndStanford(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna and stanford core nlp for pos tagging");
 		WordPosType result = new Senna().parse(tempFile);
 		String[] words = result.getWords();
@@ -317,11 +316,6 @@ public class ShallowNLP implements IPipelineStage {
 	}
 
 	@Override
-	public void init() {
-
-	}
-
-	@Override
 	public String getID() {
 		return ID;
 	}
@@ -343,7 +337,7 @@ public class ShallowNLP implements IPipelineStage {
 		// try to process on utterance array
 		try {
 			String[] utterances = prePipeData.getTranscriptions();
-			tokens = parse(utterances, true, false, null);
+			tokens = parse(utterances, null);
 			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
@@ -363,7 +357,7 @@ public class ShallowNLP implements IPipelineStage {
 		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
 		try {
 			String utterance = prePipeData.getTranscription();
-			tokens = parse(utterance, false, true, false, null);
+			tokens = parse(utterance, null);
 			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
