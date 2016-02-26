@@ -172,8 +172,15 @@ public class ShallowNLP implements IPipelineStage {
 		String[] chunks = new Facade().parse(words, pos);
 
 		int[] instr = new int[words.length];
-		if (imp)
-			instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+		if (imp) {
+			try {
+				instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+			} catch (IllegalArgumentException e) {
+				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
+				Arrays.fill(instr, -1);
+			}
+
+		}
 
 		return createTokens(words, pos, instr, chunks);
 	}
@@ -213,8 +220,14 @@ public class ShallowNLP implements IPipelineStage {
 		String[] chunks = new Facade().parse(words, pos);
 
 		int[] instr = new int[words.length];
-		if (imp)
-			instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+		if (imp) {
+			try {
+				instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+			} catch (IllegalArgumentException e) {
+				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
+				Arrays.fill(instr, -1);
+			}
+		}
 
 		return createTokens(words, pos, instr, chunks);
 	}
