@@ -11,6 +11,7 @@ import edu.kit.ipd.parse.luna.data.MissingDataException;
 import edu.kit.ipd.parse.luna.data.PrePipelineData;
 import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.graph.IGraph;
+import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 
 public class IntegrationTest {
 
@@ -22,6 +23,7 @@ public class IntegrationTest {
 	@Before
 	public void setUp() {
 		snlp = new ShallowNLP();
+		snlp.init();
 	}
 
 	@Test
@@ -42,13 +44,19 @@ public class IntegrationTest {
 	public void pipelineStageTest() {
 		PrePipelineData ppd = new PrePipelineData();
 		ppd.setTranscription("Armar go to the fridge");
-		snlp.exec(ppd);
+
+		try {
+			snlp.exec(ppd);
+		} catch (PipelineStageException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			graph = ppd.getGraph();
 		} catch (MissingDataException e) {
 			e.printStackTrace();
 		}
-		graph.showGraph();
+		System.out.println(graph.showGraph());
 
 	}
 
