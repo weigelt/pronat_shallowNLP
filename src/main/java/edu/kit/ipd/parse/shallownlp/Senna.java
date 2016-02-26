@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -45,8 +45,13 @@ public class Senna {
 	 *            the temporary input file to use
 	 * @throws IOException
 	 *             throws exception if something within file handling goes wrong
+	 * @throws InterruptedException
+	 *             throws exception if the process SENNA runs in is interrupted
+	 * @throws URISyntaxException
+	 *             throws exception if something in the URL creation of the
+	 *             SENNA resource path goes wrong
 	 */
-	WordPosType parse(File tempInputFile) throws IOException {
+	WordPosType parse(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
 		File outputFile = excecuteSenna(tempInputFile);
 		return readFile(outputFile);
 	}
@@ -59,8 +64,9 @@ public class Senna {
 	 * @param options
 	 *            the options to pass, normally just ["-usrtokens","-pos"]
 	 * @param tempInputFile
-	 *            the path of the file used as input file
+	 *            the file used as input file
 	 * @param tempOutputFile
+	 *            the file used as output file
 	 * @return the process Senna runs in
 	 */
 	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, File tempInputFile, File tempOutputFile) {
@@ -86,49 +92,49 @@ public class Senna {
 	}
 
 	/**
-	 * This method executes SENNA with the windows terminal
+	 * This method executes SENNA with the proper executional
 	 * 
-	 * @return
-	 * 
+	 * @param tempInputFile
+	 *            the file with the input
+	 * @return the file with the output
 	 * @throws IOException
+	 *             throws exception if something within file handling goes wrong
+	 * @throws URISyntaxException
+	 *             throws exception if something in the URL creation of the
+	 *             SENNA resource path goes wrong
+	 * @throws InterruptedException
+	 *             throws exception if the process SENNA runs in is interrupted
 	 */
-	private File excecuteSenna(File tempInputFile) throws IOException {
+	private File excecuteSenna(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
 		File tempOutputFile = File.createTempFile("output", "txt");
-		try {
-			URL resourceUrl = getClass().getResource("/senna");
-			Path resourcePath = Paths.get(resourceUrl.toURI());
-			ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), tempInputFile,
-					tempOutputFile);
-			Process p = builder.start();
-			if (p.waitFor() != 0) {
-				String error;
-				BufferedReader br = null;
-				StringBuilder sb = new StringBuilder();
+		Path resourcePath = Paths.get(getClass().getResource("/senna").toURI());
+		ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), tempInputFile,
+				tempOutputFile);
+		Process p = builder.start();
+		if (p.waitFor() != 0) {
+			String error;
+			BufferedReader br = null;
+			StringBuilder sb = new StringBuilder();
 
-				String line;
-				try {
-					br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					while ((line = br.readLine()) != null) {
-						sb.append(line);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					if (br != null) {
-						try {
-							br.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+			String line;
+			try {
+				br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while ((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+			} catch (IOException e) {
+				throw e;
+			} finally {
+				if (br != null) {
+					try {
+						br.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
-
-				error = sb.toString();
-				throw new RuntimeException("SENNA finished with status: " + p.exitValue() + "\nMessage:\n" + error);
 			}
-		} catch (Exception e) {
-			logger.error("Error: Parsing with SENNA failed");
-			logger.error(e.getMessage());
+			error = sb.toString();
+			logger.info("SENNA finished with status: " + p.exitValue() + "\nMessage:\n" + error);
 		}
 		return tempOutputFile;
 	}

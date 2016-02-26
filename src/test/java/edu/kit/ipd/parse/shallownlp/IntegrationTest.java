@@ -1,6 +1,7 @@
 package edu.kit.ipd.parse.shallownlp;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -28,7 +29,7 @@ public class IntegrationTest {
 		input = "Armar go to the fridge.";
 		try {
 			actual = snlp.parse(input, false, true, true, null);
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -56,7 +57,7 @@ public class IntegrationTest {
 		input = "Armar go to the fridge .";
 		try {
 			actual = snlp.parse(input, false, true, true, null);
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

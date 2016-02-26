@@ -3,6 +3,7 @@ package edu.kit.ipd.parse.shallownlp;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,8 +83,11 @@ public class ShallowNLP implements IPipelineStage {
 	 *            fix list of words which should be tagged as verbs is only used
 	 *            if the parameter opt is true
 	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
 	 */
-	public Token[] parse(String text, boolean containPeriods, boolean opt, boolean imp, WordPosType list) throws IOException {
+	public Token[] parse(String text, boolean containPeriods, boolean opt, boolean imp, WordPosType list) throws IOException,
+			URISyntaxException, InterruptedException {
 		File tempFile;
 		String[] input;
 		if (!containPeriods) {
@@ -112,8 +116,11 @@ public class ShallowNLP implements IPipelineStage {
 	 *            fix list of words which should be tagged as verb, is only used
 	 *            if the parameter opt is true
 	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
 	 */
-	public Token[] parse(String[] text, boolean opt, boolean imp, WordPosType list) throws IOException {
+	public Token[] parse(String[] text, boolean opt, boolean imp, WordPosType list) throws IOException, URISyntaxException,
+			InterruptedException {
 		File tempFile = writeToTempFile(text);
 		return shallowNLP(opt, imp, list, tempFile);
 	}
@@ -138,7 +145,8 @@ public class ShallowNLP implements IPipelineStage {
 
 	}
 
-	private Token[] shallowNLP(boolean opt, boolean imp, WordPosType list, File tempFile) throws IOException {
+	private Token[] shallowNLP(boolean opt, boolean imp, WordPosType list, File tempFile) throws IOException, URISyntaxException,
+			InterruptedException {
 		if (!opt)
 			return onlySenna(imp, tempFile);
 		else
@@ -154,8 +162,10 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param tempFile
 	 * @return a token array which is the result of parsing
 	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
 	 */
-	private Token[] onlySenna(boolean imp, File tempFile) throws IOException {
+	private Token[] onlySenna(boolean imp, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna for pos tagging");
 		WordPosType list = new Senna().parse(tempFile);
 		String[] words = list.getWords();
@@ -197,8 +207,11 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param tempFile
 	 * @return a token array which is the result of parsing
 	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
 	 */
-	private Token[] sennaAndStanford(boolean imp, WordPosType list, File tempFile) throws IOException {
+	private Token[] sennaAndStanford(boolean imp, WordPosType list, File tempFile) throws IOException, URISyntaxException,
+			InterruptedException {
 		logger.info("using senna and stanford core nlp for pos tagging");
 		WordPosType result = new Senna().parse(tempFile);
 		String[] words = result.getWords();
@@ -339,6 +352,12 @@ public class ShallowNLP implements IPipelineStage {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
@@ -352,6 +371,12 @@ public class ShallowNLP implements IPipelineStage {
 			logger.error("No utterance to process, abborting...");
 			return;
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
