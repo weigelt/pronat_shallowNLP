@@ -31,6 +31,7 @@ import edu.kit.ipd.parse.luna.graph.ParseGraph;
 import edu.kit.ipd.parse.luna.graph.ParseNode;
 import edu.kit.ipd.parse.luna.graph.ParseNodeType;
 import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
+import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.kit.ipd.parse.parsebios.Facade;
 
@@ -324,13 +325,25 @@ public class ShallowNLP implements IPipelineStage {
 		return graph;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see edu.kit.ipd.parse.luna.pipeline.IPipelineStage#getID()
+	 */
 	@Override
 	public String getID() {
 		return ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * edu.kit.ipd.parse.luna.pipeline.IPipelineStage#exec(edu.kit.ipd.parse
+	 * .luna.data.AbstractPipelineData)
+	 */
 	@Override
-	public void exec(AbstractPipelineData data) {
+	public void exec(AbstractPipelineData data) throws PipelineStageException {
 
 		Token[] tokens;
 
@@ -338,9 +351,8 @@ public class ShallowNLP implements IPipelineStage {
 		try {
 			prePipeData = data.asPrePipelineData();
 		} catch (PipelineDataCastException e) {
-			logger.error(e.toString());
-			logger.info("Cannot process on data");
-			return;
+			logger.error("Cannot process on data - PipelineData unreadable", e);
+			throw new PipelineStageException(e);
 		}
 
 		// try to process on utterance array
@@ -353,14 +365,14 @@ public class ShallowNLP implements IPipelineStage {
 		} catch (MissingDataException e) {
 			logger.info("No utterance array to process, trying single input instead...");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An IOException occured during run of SENNA", e);
+			throw new PipelineStageException(e);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An URISyntaxException occured during initialization of SENNA", e);
+			throw new PipelineStageException(e);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The SENNA process interrupted unexpectedly", e);
+			throw new PipelineStageException(e);
 		}
 
 		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
@@ -371,17 +383,17 @@ public class ShallowNLP implements IPipelineStage {
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
 		} catch (MissingDataException e) {
-			logger.error("No utterance to process, abborting...");
-			return;
+			logger.error("No utterance to process, abborting...", e);
+			throw new PipelineStageException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An IOException occured during run of SENNA", e);
+			throw new PipelineStageException(e);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An URISyntaxException occured during initialization of SENNA", e);
+			throw new PipelineStageException(e);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("The SENNA process interrupted unexpectedly", e);
+			throw new PipelineStageException(e);
 		}
 
 	}
