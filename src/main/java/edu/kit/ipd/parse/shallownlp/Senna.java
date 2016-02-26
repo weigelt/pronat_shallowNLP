@@ -33,7 +33,7 @@ public class Senna {
 	/**
 	 * Default Constructor that simply reads the Properties
 	 */
-	public Senna() {
+	Senna() {
 		props = ConfigManager.getConfiguration(getClass());
 	}
 
