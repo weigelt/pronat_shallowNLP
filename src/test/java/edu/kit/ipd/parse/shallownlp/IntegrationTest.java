@@ -3,6 +3,7 @@ package edu.kit.ipd.parse.shallownlp;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ public class IntegrationTest {
 	String input;
 	Token[] actual;
 	IGraph graph;
+	PrePipelineData ppd;
 
 	@Before
 	public void setUp() {
@@ -42,7 +44,7 @@ public class IntegrationTest {
 
 	@Test
 	public void pipelineStageTest() {
-		PrePipelineData ppd = new PrePipelineData();
+		ppd = new PrePipelineData();
 		ppd.setTranscription("Armar go to the fridge");
 
 		try {
@@ -74,4 +76,26 @@ public class IntegrationTest {
 		System.out.println(graph.showGraph());
 	}
 
+	@Test
+	public void testBatch() {
+		ppd = new PrePipelineData();
+		List<List<String>> inputHypotheses = Arrays.asList(Arrays.asList("Armar", "go", "to", "the", "fridge"),
+				Arrays.asList("Are", "man", "gone", "to", "the", "bridge"));
+		ppd.setHypotheses(inputHypotheses);
+		try {
+			snlp.exec(ppd);
+		} catch (PipelineStageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			for (List<Token> list : ppd.getTaggedHypotheses()) {
+				System.out.println(Arrays.deepToString(list.toArray()));
+			}
+		} catch (MissingDataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
