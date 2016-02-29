@@ -33,7 +33,7 @@ public class Stanford {
 	 * @return the pos tags
 	 */
 	public String[] posTag(String[] text) {
-		MaxentTagger tagger = new MaxentTagger(props.getProperty("SENNA_OPTIONS"));
+		MaxentTagger tagger = new MaxentTagger(props.getProperty("TAGGER_MODEL"));
 		List<HasWord> sent = Sentence.toWordList(text);
 		List<TaggedWord> taggedSent = tagger.tagSentence(sent);
 		String[] result = new String[taggedSent.size()];
