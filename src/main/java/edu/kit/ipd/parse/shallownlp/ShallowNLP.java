@@ -45,7 +45,7 @@ import edu.kit.ipd.parse.parsebios.Facade;
  */
 @MetaInfServices(IPipelineStage.class)
 public class ShallowNLP implements IPipelineStage {
-
+	//TODO: WordPosType definitions in config
 	private static final Logger logger = LoggerFactory.getLogger(ShallowNLP.class);
 
 	private static final String ID = "snlp";
@@ -83,23 +83,14 @@ public class ShallowNLP implements IPipelineStage {
 	 * @param text
 	 *            represents the sentences to parse. The text can consist of
 	 *            multiple sentences.
-	 * @param containPeriods
-	 *            true if the text contains periods and should be tokenized in
-	 *            sentences false if the text does not contain periods
-	 * @param opt
-	 *            enables domain specific optimization, uses SENNA and the
-	 *            stanford pos tagger for pos tagging
-	 * @param imp
-	 *            true if the text is composed of imperative sentences, then the
-	 *            instruction number can be calculated
-	 * @param verbList
-	 *            fix list of words which should be tagged as verbs is only used
-	 *            if the parameter opt is true
+	 * @param wordPosList
+	 *            the defined Word-Pos-Alignments
+	 * @return the created Tokens with POS, Chunks (and instruction number)
 	 * @throws IOException
-	 * @throws InterruptedException
 	 * @throws URISyntaxException
+	 * @throws InterruptedException
 	 */
-	public Token[] parse(String text, WordPosType list) throws IOException, URISyntaxException, InterruptedException {
+	public Token[] parse(String text, WordPosType wordPosList) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile;
 		String[] input;
 		if (!containPeriods) {
@@ -107,10 +98,10 @@ public class ShallowNLP implements IPipelineStage {
 		} else {
 
 			input = new Stanford().splitSentence(text);
-			opt = false;
+			//opt = false;
 		}
 		tempFile = writeToTempFile(input);
-		return shallowNLP(list, tempFile);
+		return shallowNLP(wordPosList, tempFile);
 	}
 
 	/**
@@ -118,22 +109,39 @@ public class ShallowNLP implements IPipelineStage {
 	 * 
 	 * @param text
 	 *            each element in the array represents one sentence to parse
-	 * @param opt
-	 *            enables domain specific optimization, uses senna and the
-	 *            stanford pos tagger for pos tagging
-	 * @param imp
-	 *            is true if the text is composed of imperative sentences, then
-	 *            the instruction number can be calculated
-	 * @param verbList
-	 *            fix list of words which should be tagged as verb, is only used
-	 *            if the parameter opt is true
+	 * @param wordPosList
+	 *            the defined Word-Pos-Alignments
+	 * @return the created Tokens with POS, Chunks (and instruction number)
 	 * @throws IOException
-	 * @throws InterruptedException
 	 * @throws URISyntaxException
+	 * @throws InterruptedException
 	 */
-	public Token[] parse(String[] text, WordPosType list) throws IOException, URISyntaxException, InterruptedException {
+	public Token[] parse(String[] text, WordPosType wordPosList) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile = writeToTempFile(text);
-		return shallowNLP(list, tempFile);
+		return shallowNLP(wordPosList, tempFile);
+	}
+
+	/**
+	 * This method parses multiple Hypotheses as batch. A hypothesis is a list
+	 * of Strings. The result is a list of tagged hypotheses
+	 * (List<List<String>>)
+	 * 
+	 * @param hypotheses
+	 *            the hypotheses to process
+	 * @param wordPosList
+	 *            the defined Word-Pos-Alignments
+	 * @return tagged hypotheses (List<List<String>>)
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 * @throws InterruptedException
+	 */
+	private List<List<Token>> parse(List<List<String>> hypotheses, WordPosType wordPosList) throws IOException, URISyntaxException,
+			InterruptedException {
+		List<List<Token>> result = new ArrayList<List<Token>>();
+		for (List<String> hypothesis : hypotheses) {
+			result.add(Arrays.asList(parse(String.join(" ", hypothesis), wordPosList)));
+		}
+		return result;
 	}
 
 	/**
@@ -345,7 +353,7 @@ public class ShallowNLP implements IPipelineStage {
 	@Override
 	public void exec(AbstractPipelineData data) throws PipelineStageException {
 
-		Token[] tokens;
+		//TODO: clean up!
 
 		//try to get data as pre pipeline data. If this fails, return
 		try {
@@ -355,10 +363,29 @@ public class ShallowNLP implements IPipelineStage {
 			throw new PipelineStageException(e);
 		}
 
+		// try to process on hypotheses. This is the default option
+		try {
+			List<List<String>> hypotheses = prePipeData.getHypotheses();
+			List<List<Token>> taggedHypotheses = parse(hypotheses, null);
+			prePipeData.setTaggedHypotheses(taggedHypotheses);
+			return;
+		} catch (MissingDataException e) {
+			logger.info("No utterance array to process, trying single input instead...");
+		} catch (IOException e) {
+			logger.error("An IOException occured during run of SENNA", e);
+			throw new PipelineStageException(e);
+		} catch (URISyntaxException e) {
+			logger.error("An URISyntaxException occured during initialization of SENNA", e);
+			throw new PipelineStageException(e);
+		} catch (InterruptedException e) {
+			logger.error("The SENNA process interrupted unexpectedly", e);
+			throw new PipelineStageException(e);
+		}
+
 		// try to process on utterance array
 		try {
 			String[] utterances = prePipeData.getTranscriptions();
-			tokens = parse(utterances, null);
+			Token[] tokens = parse(utterances, null);
 			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
@@ -378,7 +405,7 @@ public class ShallowNLP implements IPipelineStage {
 		//try to process n single utterance. If this fails, return and show error, as we have no other alternative
 		try {
 			String utterance = prePipeData.getTranscription();
-			tokens = parse(utterance, null);
+			Token[] tokens = parse(utterance, null);
 			prePipeData.setTokens(tokens);
 			prePipeData.setGraph(createAGGGraph(tokens));
 			return;
