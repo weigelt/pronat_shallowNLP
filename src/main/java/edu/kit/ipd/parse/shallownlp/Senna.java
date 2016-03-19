@@ -38,8 +38,7 @@ public class Senna {
 	}
 
 	/**
-	 * This method excecutes SENNA as a seperate process. This method is only
-	 * executable on a Windows machine.
+	 * This method excecutes SENNA as a seperate process. 
 	 * 
 	 * @param tempFile
 	 *            the temporary input file to use
