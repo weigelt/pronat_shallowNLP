@@ -288,7 +288,7 @@ public class ShallowNLP implements IPipelineStage {
 		List<String> curWords = new ArrayList<String>();
 		List<String> curPos = new ArrayList<String>();
 		for (int i = 0; i < sennaParse.getWords().length; i++) {
-			if (sennaParse.getWords()[i].equals(".")) {
+			if (sennaParse.getPos()[i].equals(".")) {
 				debatched.add(new WordPosType((String[]) curWords.toArray(), (String[]) curPos.toArray()));
 				curWords = new ArrayList<String>();
 				curPos = new ArrayList<String>();
