@@ -309,6 +309,54 @@ public class ShallowNLP implements IPipelineStage {
 		return resultList;
 	}
 
+	// TODO only copy
+	/**
+	 * This method realizes the batched pos tagging with SENNA and Stanford.
+	 * 
+	 * @param tempFile
+	 * @return A List of Token-Arrays which is the result of batched parsing
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
+	 */
+	private List<Token[]> sennaAndStanfordBatch(File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
+		logger.info("Starting BATCHED pos taggig with Senna");
+		Facade f = new Facade();
+		CalcInstruction ci = new CalcInstruction();
+		Stanford s = new Stanford();
+		List<Token[]> resultList = new ArrayList<Token[]>();
+		WordPosType sennaParse = new Senna().parse(tempFile);
+		List<WordPosType> debatchedList = generateWordPosList(sennaParse);
+		for (WordPosType curWps : debatchedList) {
+			String[] words = curWps.getWords();
+			String[] posSenna = curWps.getPos();
+			String[] posStan = s.posTag(words);
+			for (int i = 0; i < words.length; i++) {
+				if (fillers.contains(words[i].toLowerCase()))
+					posSenna[i] = POSTag.INTERJECTION.getTag();
+				else if (!posSenna[i].startsWith("VB") && posStan[i].startsWith("VB"))
+					posSenna[i] = posStan[i];
+			}
+
+			String[] chunks = new Facade().parse(words, posSenna);
+
+			int[] instr = new int[words.length];
+			if (imp) {
+				try {
+					instr = ci.calculateInstructionNumber(words, posSenna);
+				} catch (IllegalArgumentException e) {
+					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
+					Arrays.fill(instr, -1);
+				}
+
+			}
+
+			resultList.add(createTokens(words, posSenna, instr, chunks));
+		}
+		return resultList;
+	}
+
 	List<WordPosType> generateWordPosList(WordPosType sennaParse) {
 		List<WordPosType> debatched = new ArrayList<WordPosType>();
 		List<String> curWords = new ArrayList<String>();
