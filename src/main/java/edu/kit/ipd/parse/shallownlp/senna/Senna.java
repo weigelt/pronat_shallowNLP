@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.parse.shallownlp.senna;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
+import edu.kit.ipd.parse.shallownlp.WordPosType;
 
 /**
  * This class represents a facade for SENNA
@@ -33,7 +34,7 @@ public class Senna {
 	/**
 	 * Default Constructor that simply reads the Properties
 	 */
-	Senna() {
+	public Senna() {
 		props = ConfigManager.getConfiguration(getClass());
 	}
 
@@ -51,7 +52,7 @@ public class Senna {
 	 *             throws exception if something in the URL creation of the
 	 *             SENNA resource path goes wrong
 	 */
-	WordPosType parse(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
+	public WordPosType parse(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
 		File outputFile = excecuteSenna(tempInputFile);
 		return readFile(outputFile);
 	}
@@ -133,6 +134,26 @@ public class Senna {
 			logger.info("SENNA finished with status: " + p.exitValue() + "\nMessage:\n" + error);
 		}
 		return tempOutputFile;
+
+		/**
+		 * File sennaExecutable = new File(directory.getPath() + "/" +
+		 * sennaExecutableName);
+		 * 
+		 * if (sennaExecutable.exists() && sennaExecutable.canExecute()) {
+		 * taggerInitialized = true; logger.debug(
+		 * "Initialized Senna tagger. Using binary {}",
+		 * sennaExecutable.getAbsolutePath());
+		 * 
+		 * command = new String[] { sennaExecutable.getAbsolutePath(), "-pos",
+		 * "-usrtokens", "-notokentags", };
+		 * 
+		 * pb = new ProcessBuilder(command); pb.directory(directory);
+		 * 
+		 * pb.redirectErrorStream(false); } else { logger.error(
+		 * "Cannot find Senna executable at {} - check your config in {}",
+		 * directory, ConfigManager.getConfigurationFile(SennaTagger.class)); }
+		 */
+
 	}
 
 	/**
