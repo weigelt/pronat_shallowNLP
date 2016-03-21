@@ -69,8 +69,7 @@ public class Senna {
 	 *            the file used as output file
 	 * @return the process Senna runs in
 	 */
-	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, File tempInputFile,
-			File tempOutputFile) {
+	private ProcessBuilder createSennaProcess(Path resourcePath, String[] options, File tempInputFile, File tempOutputFile) {
 		String os = System.getProperty("os.name", "generic").toLowerCase();
 		ProcessBuilder pb;
 		List<String> command = new ArrayList<String>();
@@ -109,8 +108,8 @@ public class Senna {
 	private File excecuteSenna(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
 		File tempOutputFile = File.createTempFile("output", "txt");
 		Path resourcePath = Paths.get(getClass().getResource("/senna").toURI());
-		ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","),
-				tempInputFile, tempOutputFile);
+		ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), tempInputFile,
+				tempOutputFile);
 		Process p = builder.start();
 		if (p.waitFor() != 0) {
 			String error;
