@@ -90,8 +90,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	public Token[] parse(String text, WordPosType wordPosList)
-			throws IOException, URISyntaxException, InterruptedException {
+	public Token[] parse(String text, WordPosType wordPosList) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile;
 		String[] input;
 		if (!containPeriods) {
@@ -117,8 +116,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	public Token[] parse(String[] text, WordPosType wordPosList)
-			throws IOException, URISyntaxException, InterruptedException {
+	public Token[] parse(String[] text, WordPosType wordPosList) throws IOException, URISyntaxException, InterruptedException {
 		File tempFile = writeToTempFile(text);
 		return shallowNLP(wordPosList, tempFile);
 	}
@@ -178,8 +176,7 @@ public class ShallowNLP implements IPipelineStage {
 		return tempFile;
 	}
 
-	private Token[] shallowNLP(WordPosType list, File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
+	private Token[] shallowNLP(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		if (!opt)
 			return onlySenna(tempFile);
 		else
@@ -251,8 +248,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private Token[] sennaAndStanford(WordPosType list, File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
+	private Token[] sennaAndStanford(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna and stanford core nlp for pos tagging");
 		WordPosType result = new Senna().parse(tempFile);
 		String[] words = result.getWords();
@@ -295,8 +291,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private List<List<Token>> onlySennaBatch(File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
+	private List<List<Token>> onlySennaBatch(File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("Starting BATCHED pos taggig with Senna");
 		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
@@ -385,8 +380,7 @@ public class ShallowNLP implements IPipelineStage {
 		List<String> curPos = new ArrayList<String>();
 		for (int i = 0; i < sennaParse.getWords().length; i++) {
 			if (sennaParse.getPos()[i].equals(".")) {
-				debatched.add(new WordPosType(curWords.toArray(new String[curWords.size()]),
-						curPos.toArray(new String[curPos.size()])));
+				debatched.add(new WordPosType(curWords.toArray(new String[curWords.size()]), curPos.toArray(new String[curPos.size()])));
 				curWords = new ArrayList<String>();
 				curPos = new ArrayList<String>();
 			} else {
