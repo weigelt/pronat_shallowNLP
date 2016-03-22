@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,11 +86,33 @@ public class Senna {
 		}
 		command.addAll(Arrays.asList(options));
 		logger.trace("Calling the process builder with: {}", command.toString());
-		pb = new ProcessBuilder(command);
-		pb.redirectInput(tempInputFile);
-		pb.redirectOutput(tempOutputFile);
-		pb.directory(new File(resourcePath.toString()));
-		return pb;
+
+		File sennaExecutable = new File(URI.create(command.toString()));
+
+		if (sennaExecutable.exists() && sennaExecutable.canExecute()) {
+
+			logger.debug("Initialized Senna tagger. Using binary {}", sennaExecutable.getAbsolutePath());
+
+			//command = new String[] { sennaExecutable.getAbsolutePath(), options };
+			command.addAll(Arrays.asList(options));
+			pb = new ProcessBuilder(command);
+			pb.redirectInput(tempInputFile);
+			pb.redirectOutput(tempOutputFile);
+			pb.directory(new File(resourcePath.toString()));
+			//pb.directory(directory);
+
+			//pb.redirectErrorStream(false);
+			return pb;
+		} else {
+			logger.equals("Cannot start Senna!");
+			return null;
+		}
+
+		//		pb = new ProcessBuilder(command);
+		//	pb.redirectInput(tempInputFile);
+		//		pb.redirectOutput(tempOutputFile);
+		//		pb.directory(new File(resourcePath.toString()));
+		//	return pb;
 	}
 
 	/**
