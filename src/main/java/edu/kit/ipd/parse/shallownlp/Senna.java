@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp.senna;
+package edu.kit.ipd.parse.shallownlp;
 
 import java.io.BufferedReader;
 import java.io.File;

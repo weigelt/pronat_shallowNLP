@@ -34,7 +34,6 @@ import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.kit.ipd.parse.parsebios.Facade;
-import edu.kit.ipd.parse.shallownlp.senna.Senna;
 
 /**
  * This class represents the API to use this project. The goal of this project
