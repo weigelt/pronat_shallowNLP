@@ -1,11 +1,10 @@
-package edu.kit.ipd.parse.shallownlp.senna;
+package edu.kit.ipd.parse.shallownlp;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,11 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
-import edu.kit.ipd.parse.shallownlp.WordPosType;
 
 /**
  * This class represents a facade for SENNA
@@ -87,7 +86,7 @@ public class Senna {
 		command.addAll(Arrays.asList(options));
 		logger.trace("Calling the process builder with: {}", command.toString());
 
-		File sennaExecutable = new File(URI.create(command.toString()));
+		File sennaExecutable = new File(command.get(0));
 
 		if (sennaExecutable.exists()) {
 			sennaExecutable.setExecutable(true);
@@ -98,7 +97,10 @@ public class Senna {
 			pb = new ProcessBuilder(command);
 			pb.redirectInput(tempInputFile);
 			pb.redirectOutput(tempOutputFile);
-			pb.directory(pb.directory());
+			pb.directory(new File(resourcePath.toString()));
+			logger.debug("dir {}", pb.directory());
+			pb.directory().canRead();
+			pb.directory().canExecute();
 			//pb.directory(directory);
 
 			pb.redirectErrorStream(false);
@@ -131,7 +133,9 @@ public class Senna {
 	 */
 	private File excecuteSenna(File tempInputFile) throws IOException, URISyntaxException, InterruptedException {
 		File tempOutputFile = File.createTempFile("output", "txt");
+		logger.debug("path {}", Paths.get(this.getClass().getResource("senna").toURI()));
 		Path resourcePath = Paths.get(getClass().getResource("/senna").toURI());
+		//Path resourcePath = Paths.get("/home/seb/Downloads/senna");
 		ProcessBuilder builder = createSennaProcess(resourcePath, props.getProperty("SENNA_OPTIONS").split(","), tempInputFile,
 				tempOutputFile);
 		Process p = builder.start();
@@ -139,6 +143,7 @@ public class Senna {
 			String error;
 			BufferedReader br = null;
 			StringBuilder sb = new StringBuilder();
+			logger.debug("lines {}", IOUtils.readLines(p.getErrorStream()));
 
 			String line;
 			try {
