@@ -1,4 +1,0 @@
-            Was	       VBD	      S-VP	         O	              -	(S1(VP*
-           geht	        JJ	      B-NP	         O	              -	(NP*
-         abbbbb	        NN	      E-NP	         O	              -	*)))
-
