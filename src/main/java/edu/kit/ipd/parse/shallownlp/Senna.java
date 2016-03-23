@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.parse.shallownlp.senna;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -89,8 +89,8 @@ public class Senna {
 
 		File sennaExecutable = new File(URI.create(command.toString()));
 
-		if (sennaExecutable.exists() && sennaExecutable.canExecute()) {
-
+		if (sennaExecutable.exists()) {
+			sennaExecutable.setExecutable(true);
 			logger.debug("Initialized Senna tagger. Using binary {}", sennaExecutable.getAbsolutePath());
 
 			//command = new String[] { sennaExecutable.getAbsolutePath(), options };
@@ -98,10 +98,10 @@ public class Senna {
 			pb = new ProcessBuilder(command);
 			pb.redirectInput(tempInputFile);
 			pb.redirectOutput(tempOutputFile);
-			pb.directory(new File(resourcePath.toString()));
+			pb.directory(pb.directory());
 			//pb.directory(directory);
 
-			//pb.redirectErrorStream(false);
+			pb.redirectErrorStream(false);
 			return pb;
 		} else {
 			logger.equals("Cannot start Senna!");
