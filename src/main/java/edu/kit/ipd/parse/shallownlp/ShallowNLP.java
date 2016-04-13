@@ -261,7 +261,7 @@ public class ShallowNLP implements IPipelineStage {
 				pos[i] = list.getPos()[Arrays.asList(list.getWords()).indexOf(words[i])];
 			else if (fillers.contains(words[i].toLowerCase()))
 				pos[i] = POSTag.INTERJECTION.getTag();
-			else if (!posSenna[i].startsWith("VB") && posStan[i].startsWith("VB"))
+			else if (posStan[i].startsWith("VB"))
 				pos[i] = posStan[i];
 			else
 				pos[i] = posSenna[i];
@@ -352,7 +352,7 @@ public class ShallowNLP implements IPipelineStage {
 					posSenna[i] = list.getPos()[Arrays.asList(list.getWords()).indexOf(words[i])];
 				else if (fillers.contains(words[i].toLowerCase()))
 					posSenna[i] = POSTag.INTERJECTION.getTag();
-				else if (!posSenna[i].startsWith("VB") && posStan[i].startsWith("VB"))
+				else if (posStan[i].startsWith("VB"))
 					posSenna[i] = posStan[i];
 			}
 
