@@ -79,7 +79,7 @@ public class Senna {
 		} else if (os.contains("nux")) {
 			command.add(resourcePath.toString() + "/senna-linux64");
 		} else if (os.contains("win") && System.getenv("ProgramFiles(x86)") != null) {
-			command.add(resourcePath.toString() + "/senna.exe");
+			command.add(resourcePath.toString() + "/senna-win32.exe");
 		} else {
 			command.add(resourcePath.toString() + "/senna-win32.exe");
 		}
