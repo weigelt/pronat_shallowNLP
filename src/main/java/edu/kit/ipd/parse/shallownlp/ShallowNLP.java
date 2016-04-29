@@ -26,10 +26,8 @@ import edu.kit.ipd.parse.luna.graph.IArcType;
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.graph.INode;
 import edu.kit.ipd.parse.luna.graph.INodeType;
-import edu.kit.ipd.parse.luna.graph.ParseArcType;
 import edu.kit.ipd.parse.luna.graph.ParseGraph;
 import edu.kit.ipd.parse.luna.graph.ParseNode;
-import edu.kit.ipd.parse.luna.graph.ParseNodeType;
 import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
@@ -426,8 +424,8 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	public IGraph createAGGGraph(Token[] input) {
 		IGraph graph = new ParseGraph();
-		INodeType wordType = new ParseNodeType("token");
-		IArcType arcType = new ParseArcType("relation");
+		INodeType wordType = graph.getNodeType("token");
+		IArcType arcType = graph.getArcType("relation");
 
 		wordType.addAttributeToType("String", "value");
 		wordType.addAttributeToType("String", "pos");
