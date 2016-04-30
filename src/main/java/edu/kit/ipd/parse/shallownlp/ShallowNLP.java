@@ -166,9 +166,9 @@ public class ShallowNLP implements IPipelineStage {
 		writer = new PrintWriter(tempFile);
 		for (List<String> hypothesis : hypotheses) {
 			for (String line : hypothesis) {
-				writer.println(line);
+				writer.print(line + " ");
 			}
-			writer.println(".");
+			writer.println(". ");
 		}
 		writer.close();
 		return tempFile;
