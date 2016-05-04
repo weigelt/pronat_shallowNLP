@@ -159,7 +159,7 @@ public class Senna {
 				}
 			}
 			error = sb.toString();
-			logger.info("SENNA finished with status: " + p.exitValue() + "\nMessage:\n" + error);
+			logger.error("SENNA finished with status: " + p.exitValue() + "\nMessage:\n" + error);
 		}
 		return tempOutputFile;
 
