@@ -7,7 +7,7 @@
     <layout class="org.apache.log4j.PatternLayout"> 
       <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/> 
     </layout> 
-  </appender><logger name="edu.kit.ipd.parse.dummy">
+  </appender><logger name="edu.kit.ipd.parse.shallownlp">
     <level value="trace"></level></logger> 
 
     <root>
