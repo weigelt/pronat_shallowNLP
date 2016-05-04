@@ -133,8 +133,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList) throws IOException, URISyntaxException,
-			InterruptedException {
+	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList)
+			throws IOException, URISyntaxException, InterruptedException {
 		List<List<Token>> result = new ArrayList<List<Token>>();
 		File tempFile = writeBatchToTempFile(hypotheses);
 		return shallowNLPBatch(wordPosList, tempFile);
@@ -181,8 +181,8 @@ public class ShallowNLP implements IPipelineStage {
 			return sennaAndStanford(list, tempFile);
 	}
 
-	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
+	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
 		if (!opt)
 			return onlySennaBatch(tempFile);
 		else
@@ -332,8 +332,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
+	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
 		logger.info("Starting BATCHED pos taggig with Senna");
 		//		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
