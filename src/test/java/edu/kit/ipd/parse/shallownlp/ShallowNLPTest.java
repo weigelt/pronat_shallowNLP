@@ -5,6 +5,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import edu.kit.ipd.parse.luna.data.token.WordPosType;
+
 public class ShallowNLPTest {
 
 	@Test

@@ -21,6 +21,7 @@ import edu.kit.ipd.parse.luna.data.token.Chunk;
 import edu.kit.ipd.parse.luna.data.token.ChunkIOB;
 import edu.kit.ipd.parse.luna.data.token.POSTag;
 import edu.kit.ipd.parse.luna.data.token.Token;
+import edu.kit.ipd.parse.luna.data.token.WordPosType;
 import edu.kit.ipd.parse.luna.graph.IArc;
 import edu.kit.ipd.parse.luna.graph.IArcType;
 import edu.kit.ipd.parse.luna.graph.IGraph;
