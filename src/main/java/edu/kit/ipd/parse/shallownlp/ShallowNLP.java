@@ -135,8 +135,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList)
-			throws IOException, URISyntaxException, InterruptedException {
+	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList) throws IOException, URISyntaxException,
+			InterruptedException {
 		List<List<Token>> result = new ArrayList<List<Token>>();
 		File tempFile = writeBatchToTempFile(hypotheses);
 		return shallowNLPBatch(wordPosList, tempFile);
@@ -183,8 +183,8 @@ public class ShallowNLP implements IPipelineStage {
 			return sennaAndStanford(list, tempFile);
 	}
 
-	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
+	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile) throws IOException, URISyntaxException,
+			InterruptedException {
 		if (!opt)
 			return onlySennaBatch(tempFile);
 		else
@@ -334,8 +334,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
+	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile) throws IOException, URISyntaxException,
+			InterruptedException {
 		logger.info("Starting BATCHED pos taggig with Senna");
 		//		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
@@ -416,15 +416,13 @@ public class ShallowNLP implements IPipelineStage {
 	}
 
 	/**
-	 * This method creates the AGG-Graph from the token array.
+	 * This method creates the ParseGraph from the token array.
 	 * 
 	 * @param input
 	 *            the token array
-	 * @param saveAGGto
-	 *            location to save the AGG-Graph.
-	 * @return the AGG-Graph
+	 * @return the ParseGraph
 	 */
-	public IGraph createAGGGraph(Token[] input) {
+	public IGraph createParseGraph(Token[] input) {
 		IGraph graph = new ParseGraph();
 		INodeType wordType = graph.getNodeType("token");
 		IArcType arcType = graph.getArcType("relation");
@@ -516,7 +514,7 @@ public class ShallowNLP implements IPipelineStage {
 			String[] utterances = prePipeData.getTranscriptions();
 			Token[] tokens = parse(utterances, null);
 			prePipeData.setTokens(tokens);
-			prePipeData.setGraph(createAGGGraph(tokens));
+			prePipeData.setGraph(createParseGraph(tokens));
 			return;
 		} catch (MissingDataException e) {
 			logger.info("No utterance array to process, trying single input instead...");
@@ -537,7 +535,7 @@ public class ShallowNLP implements IPipelineStage {
 			String utterance = prePipeData.getTranscription();
 			Token[] tokens = parse(utterance, null);
 			prePipeData.setTokens(tokens);
-			prePipeData.setGraph(createAGGGraph(tokens));
+			prePipeData.setGraph(createParseGraph(tokens));
 			return;
 		} catch (MissingDataException e) {
 			logger.error("No utterance to process, abborting...", e);
