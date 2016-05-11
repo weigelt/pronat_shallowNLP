@@ -48,6 +48,10 @@ public class ShallowNLP implements IPipelineStage {
 	// TODO: WordPosType definitions in config
 	private static final Logger logger = LoggerFactory.getLogger(ShallowNLP.class);
 
+	// TODO: move this to config
+	private static final String RELATION_ARC_TYPE = "relation";
+	private static final String TOKEN_NODE_TYPE = "token";
+
 	private static final String ID = "snlp";
 
 	private PrePipelineData prePipeData;
@@ -424,8 +428,19 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	public IGraph createParseGraph(Token[] input) {
 		IGraph graph = new ParseGraph();
-		INodeType wordType = graph.getNodeType("token");
-		IArcType arcType = graph.getArcType("relation");
+		INodeType wordType;
+		IArcType arcType;
+		if (graph.hasNodeType(TOKEN_NODE_TYPE)) {
+			wordType = graph.getNodeType(TOKEN_NODE_TYPE);
+		} else {
+			wordType = graph.createNodeType(TOKEN_NODE_TYPE);
+		}
+
+		if (graph.hasArcType(RELATION_ARC_TYPE)) {
+			arcType = graph.getArcType(RELATION_ARC_TYPE);
+		} else {
+			arcType = graph.createArcType(RELATION_ARC_TYPE);
+		}
 
 		wordType.addAttributeToType("String", "value");
 		wordType.addAttributeToType("String", "pos");
