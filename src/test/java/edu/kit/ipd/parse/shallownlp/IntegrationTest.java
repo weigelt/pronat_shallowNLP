@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.kit.ipd.parse.luna.data.MissingDataException;
@@ -22,7 +22,7 @@ public class IntegrationTest {
 	IGraph graph;
 	PrePipelineData ppd;
 
-	@Before
+	@BeforeClass
 	public void setUp() {
 		snlp = new ShallowNLP();
 		snlp.init();
