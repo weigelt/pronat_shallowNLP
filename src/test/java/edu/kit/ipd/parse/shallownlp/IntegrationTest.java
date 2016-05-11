@@ -38,7 +38,7 @@ public class IntegrationTest {
 			e.printStackTrace();
 		}
 		System.out.println(Arrays.deepToString(actual));
-		graph = snlp.createAGGGraph(actual);
+		graph = snlp.createParseGraph(actual);
 		graph.showGraph();
 	}
 
@@ -72,7 +72,7 @@ public class IntegrationTest {
 			e.printStackTrace();
 		}
 		System.out.println(Arrays.deepToString(actual));
-		graph = snlp.createAGGGraph(actual);
+		graph = snlp.createParseGraph(actual);
 		System.out.println(graph.showGraph());
 	}
 
