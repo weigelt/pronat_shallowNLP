@@ -34,6 +34,7 @@ import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.kit.ipd.parse.parsebios.Facade;
 import edu.kit.ipd.parse.senna_wrapper.Senna;
+import edu.kit.ipd.parse.senna_wrapper.WordSennaResult;
 
 /**
  * This class represents the API to use this project. The goal of this project
@@ -139,8 +140,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList) throws IOException, URISyntaxException,
-			InterruptedException {
+	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList)
+			throws IOException, URISyntaxException, InterruptedException {
 		List<List<Token>> result = new ArrayList<List<Token>>();
 		File tempFile = writeBatchToTempFile(hypotheses);
 		return shallowNLPBatch(wordPosList, tempFile);
@@ -187,8 +188,8 @@ public class ShallowNLP implements IPipelineStage {
 			return sennaAndStanford(list, tempFile);
 	}
 
-	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
+	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
 		if (!opt)
 			return onlySennaBatch(tempFile);
 		else
@@ -209,9 +210,14 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	private Token[] onlySenna(File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna for pos tagging");
-		WordPosType list = new Senna().parse(tempFile);
-		String[] words = list.getWords();
-		String[] posSenna = list.getPos();
+		List<WordSennaResult> list = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+		String[] words = new String[list.size()];
+		String[] posSenna = new String[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			WordSennaResult word = list.get(i);
+			words[i] = word.getWord();
+			posSenna[i] = word.getAnalysisResults()[0];
+		}
 
 		String[] pos = new String[words.length];
 		for (int i = 0; i < words.length; i++) {
@@ -254,9 +260,14 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	private Token[] sennaAndStanford(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna and stanford core nlp for pos tagging");
-		WordPosType result = new Senna().parse(tempFile);
-		String[] words = result.getWords();
-		String[] posSenna = result.getPos();
+		List<WordSennaResult> results = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+		String[] words = new String[results.size()];
+		String[] posSenna = new String[results.size()];
+		for (int i = 0; i < results.size(); i++) {
+			WordSennaResult word = results.get(i);
+			words[i] = word.getWord();
+			posSenna[i] = word.getAnalysisResults()[0];
+		}
 		String[] posStan = new Stanford().posTag(words);
 
 		String[] pos = new String[words.length];
@@ -296,15 +307,20 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 */
 	private List<List<Token>> onlySennaBatch(File tempFile) throws IOException, URISyntaxException, InterruptedException {
-		logger.info("Starting BATCHED pos taggig with Senna");
+		logger.info("Starting BATCHED pos tagging with Senna");
 		//		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
 		List<List<Token>> resultList = new ArrayList<List<Token>>();
-		WordPosType sennaParse = new Senna().parse(tempFile);
-		List<WordPosType> debatchedList = generateWordPosList(sennaParse);
-		for (WordPosType curWps : debatchedList) {
-			String[] words = curWps.getWords();
-			String[] posSenna = curWps.getPos();
+		List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+		List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
+		for (List<WordSennaResult> curWsrs : debatchedList) {
+			String[] words = new String[curWsrs.size()];
+			String[] posSenna = new String[curWsrs.size()];
+			for (int i = 0; i < curWsrs.size(); i++) {
+				WordSennaResult word = curWsrs.get(i);
+				words[i] = word.getWord();
+				posSenna[i] = word.getAnalysisResults()[0];
+			}
 
 			for (int i = 0; i < words.length; i++) {
 				if (fillers.contains(words[i].toLowerCase()))
@@ -338,18 +354,23 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws InterruptedException
 	 * @throws URISyntaxException
 	 */
-	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile) throws IOException, URISyntaxException,
-			InterruptedException {
-		logger.info("Starting BATCHED pos taggig with Senna");
+	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
+		logger.info("Starting BATCHED pos tagging with Senna");
 		//		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
 		Stanford s = new Stanford();
 		List<List<Token>> resultList = new ArrayList<List<Token>>();
-		WordPosType sennaParse = new Senna().parse(tempFile);
-		List<WordPosType> debatchedList = generateWordPosList(sennaParse);
-		for (WordPosType curWps : debatchedList) {
-			String[] words = curWps.getWords();
-			String[] posSenna = curWps.getPos();
+		List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+		List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
+		for (List<WordSennaResult> curWsrs : debatchedList) {
+			String[] words = new String[curWsrs.size()];
+			String[] posSenna = new String[curWsrs.size()];
+			for (int i = 0; i < curWsrs.size(); i++) {
+				WordSennaResult word = curWsrs.get(i);
+				words[i] = word.getWord();
+				posSenna[i] = word.getAnalysisResults()[0];
+			}
 			String[] posStan = s.posTag(words);
 			for (int i = 0; i < words.length; i++) {
 				if (list != null && Arrays.asList(list.getWords()).contains(words[i]))
@@ -378,18 +399,15 @@ public class ShallowNLP implements IPipelineStage {
 		return resultList;
 	}
 
-	List<WordPosType> generateWordPosList(WordPosType sennaParse) {
-		List<WordPosType> debatched = new ArrayList<WordPosType>();
-		List<String> curWords = new ArrayList<String>();
-		List<String> curPos = new ArrayList<String>();
-		for (int i = 0; i < sennaParse.getWords().length; i++) {
-			if (sennaParse.getPos()[i].equals(".")) {
-				debatched.add(new WordPosType(curWords.toArray(new String[curWords.size()]), curPos.toArray(new String[curPos.size()])));
-				curWords = new ArrayList<String>();
-				curPos = new ArrayList<String>();
+	List<List<WordSennaResult>> generateDebatchedWordSennaResultList(List<WordSennaResult> sennaParse) {
+		List<List<WordSennaResult>> debatched = new ArrayList<List<WordSennaResult>>();
+		List<WordSennaResult> current = new ArrayList<WordSennaResult>();
+		for (int i = 0; i < sennaParse.size(); i++) {
+			if (sennaParse.get(i).getAnalysisResults()[0].equals(".")) {
+				debatched.add(current);
+				current = new ArrayList<WordSennaResult>();
 			} else {
-				curWords.add(sennaParse.getWords()[i]);
-				curPos.add(sennaParse.getPos()[i]);
+				current.add(sennaParse.get(i));
 			}
 		}
 		return debatched;
