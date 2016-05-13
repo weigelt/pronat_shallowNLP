@@ -211,6 +211,8 @@ public class ShallowNLP implements IPipelineStage {
 	private Token[] onlySenna(File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna for pos tagging");
 		List<WordSennaResult> list = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+
+		// get words and pos tags from Senna Result
 		String[] words = new String[list.size()];
 		String[] posSenna = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
@@ -261,6 +263,8 @@ public class ShallowNLP implements IPipelineStage {
 	private Token[] sennaAndStanford(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("using senna and stanford core nlp for pos tagging");
 		List<WordSennaResult> results = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+
+		// get words and pos tags from Senna Result
 		String[] words = new String[results.size()];
 		String[] posSenna = new String[results.size()];
 		for (int i = 0; i < results.size(); i++) {
@@ -268,6 +272,7 @@ public class ShallowNLP implements IPipelineStage {
 			words[i] = word.getWord();
 			posSenna[i] = word.getAnalysisResults()[0];
 		}
+
 		String[] posStan = new Stanford().posTag(words);
 
 		String[] pos = new String[words.length];
@@ -314,6 +319,8 @@ public class ShallowNLP implements IPipelineStage {
 		List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
 		List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
 		for (List<WordSennaResult> curWsrs : debatchedList) {
+
+			// get words and pos tags from Senna Result
 			String[] words = new String[curWsrs.size()];
 			String[] posSenna = new String[curWsrs.size()];
 			for (int i = 0; i < curWsrs.size(); i++) {

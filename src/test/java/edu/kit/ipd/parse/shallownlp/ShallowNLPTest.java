@@ -14,25 +14,29 @@ public class ShallowNLPTest {
 	public void testWordPosDebatch() {
 		String[] inputWords = { "This", "is", "a", "test", ".", "And", "it", "is", "over", "." };
 		String[] inputPos = { "DT", "VBZ", "DT", "NN", ".", "CC", "PRP", "VBZ", "RP", "." };
-		//WordPosType input = new WordPosType(inputWords, inputPos);
+
 		List<WordSennaResult> input = new ArrayList<WordSennaResult>();
 		for (int i = 0; i < inputWords.length; i++) {
 			input.add(new WordSennaResult(inputWords[i], new String[] { inputPos[i] }));
 		}
+
 		String[] expWords_0 = { "This", "is", "a", "test" };
 		String[] expPos_0 = { "DT", "VBZ", "DT", "NN" };
 		String[] expWords_1 = { "And", "it", "is", "over" };
 		String[] expPos_1 = { "CC", "PRP", "VBZ", "RP" };
+
 		List<WordSennaResult> exp_0 = new ArrayList<WordSennaResult>();
 		for (int i = 0; i < expWords_0.length; i++) {
 			exp_0.add(new WordSennaResult(expWords_0[i], new String[] { expPos_0[i] }));
 		}
+
 		List<WordSennaResult> exp_1 = new ArrayList<WordSennaResult>();
 		for (int i = 0; i < expWords_1.length; i++) {
 			exp_1.add(new WordSennaResult(expWords_1[i], new String[] { expPos_1[i] }));
 		}
 
 		List<List<WordSennaResult>> actualList = new ShallowNLP().generateDebatchedWordSennaResultList(input);
+
 		Assert.assertEquals(2, actualList.size());
 		for (int i = 0; i < expWords_0.length; i++) {
 			Assert.assertEquals(exp_0.get(i).getWord(), actualList.get(0).get(i).getWord());
