@@ -5,8 +5,6 @@ senna_wrapper_master:
         - mvn
     only:
         - master
-    except:
-        - branches
 
 senna_wrapper_branches:
     script:
