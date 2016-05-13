@@ -16,14 +16,14 @@ import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 
 public class IntegrationTest {
 
-	ShallowNLP snlp;
+	static ShallowNLP snlp;
 	String input;
 	Token[] actual;
 	IGraph graph;
 	PrePipelineData ppd;
 
 	@BeforeClass
-	public void setUp() {
+	public static void setUp() {
 		snlp = new ShallowNLP();
 		snlp.init();
 	}
