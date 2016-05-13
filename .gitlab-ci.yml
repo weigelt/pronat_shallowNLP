@@ -1,4 +1,4 @@
-senna_wrapper_master:
+master:
     script:
         - mvn test -B
     tags:
@@ -8,7 +8,7 @@ senna_wrapper_master:
     except:
         - branches
 
-senna_wrapper_branches:
+branches:
     script:
         - mvn test -B
     tags:
