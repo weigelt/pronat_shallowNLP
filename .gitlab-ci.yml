@@ -1,12 +1,12 @@
-senna_wrapper_master:
+shallowNLP_master:
     script:
-        - mvn test -B
+        - mvn source:jar deploy -B
     tags:
         - mvn
     only:
         - master
 
-senna_wrapper_branches:
+shallowNLP_branches:
     script:
         - mvn test -B
     tags:
