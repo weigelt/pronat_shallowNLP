@@ -7,6 +7,7 @@ shallowNLP_master:
         - master
 
 shallowNLP_branches:
+branches:
     script:
         - mvn test -B
     tags:
