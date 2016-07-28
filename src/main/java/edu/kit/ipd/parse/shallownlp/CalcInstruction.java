@@ -1,7 +1,7 @@
 package edu.kit.ipd.parse.shallownlp;
 
-
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class contains the heuristic to calculate the instruction number for
@@ -12,9 +12,13 @@ import java.util.Arrays;
  *         (2016-07-28)
  */
 public class CalcInstruction {
+	private static final List<String> if_keywords = Arrays.asList(new String[] { "if", "when", "whenever", "unless" });
+	private static final List<String> then_keywords = Arrays.asList(new String[] { "then" });
+	private static final List<String> else_keywords = Arrays.asList(new String[] { "else", "otherwise", "elseways",
+			"alternatively", "instead", "either", "rather", "oppositely" });
 
-	private static final String[] temporal_keywords = { "before", "after", "finally", "when", "afterwards", "then",
-			"later", "thereupon", "whereupon", "hereupon", "as", "previously" };
+	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally",
+			"when", "afterwards", "then", "later", "thereupon", "whereupon", "hereupon", "as", "previously" });
 
 	/**
 	 * This method calculates the instruction number for each word of the input
@@ -90,8 +94,9 @@ public class CalcInstruction {
 	}
 
 	private boolean isInstructionBoundary(String word) {
-		if (word.toLowerCase().equals("and") || word.toLowerCase().equals("if") || word.toLowerCase().equals("when")
-				|| Arrays.asList(temporal_keywords).contains(word)) {
+		if (word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
+				|| temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
+				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase())) {
 			return true;
 		}
 		return false;
