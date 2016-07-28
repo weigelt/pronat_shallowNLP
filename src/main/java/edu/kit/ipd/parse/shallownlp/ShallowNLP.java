@@ -58,6 +58,7 @@ public class ShallowNLP implements IPipelineStage {
 	private PrePipelineData prePipeData;
 
 	private Properties props;
+	private Stanford stanford;
 
 	private boolean imp, opt, containPeriods, excludeFillers;
 
@@ -71,6 +72,7 @@ public class ShallowNLP implements IPipelineStage {
 	@Override
 	public void init() {
 		props = ConfigManager.getConfiguration(getClass());
+		stanford = new Stanford();
 		imp = Boolean.parseBoolean(props.getProperty("IMPERATIVE"));
 		containPeriods = Boolean.parseBoolean(props.getProperty("PERIODS"));
 		excludeFillers = Boolean.parseBoolean(props.getProperty("EXCLUDE_FILLERS"));
@@ -273,7 +275,7 @@ public class ShallowNLP implements IPipelineStage {
 			posSenna[i] = word.getAnalysisResults()[0];
 		}
 
-		String[] posStan = new Stanford().posTag(words);
+		String[] posStan = stanford.posTag(words);
 
 		String[] pos = new String[words.length];
 		for (int i = 0; i < words.length; i++) {
@@ -366,7 +368,7 @@ public class ShallowNLP implements IPipelineStage {
 		logger.info("Starting BATCHED pos tagging with Senna");
 		//		Facade f = new Facade();
 		CalcInstruction ci = new CalcInstruction();
-		Stanford s = new Stanford();
+		Stanford s = stanford;
 		List<List<Token>> resultList = new ArrayList<List<Token>>();
 		List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
 		List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
