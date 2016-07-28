@@ -104,7 +104,7 @@ public class ShallowNLP implements IPipelineStage {
 			input = new String[] { text };
 		} else {
 
-			input = new Stanford().splitSentence(text);
+			input = stanford.splitSentence(text);
 			// opt = false;
 		}
 		tempFile = writeToTempFile(input);
