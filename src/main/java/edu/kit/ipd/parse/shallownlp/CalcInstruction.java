@@ -14,11 +14,11 @@ import java.util.List;
 public class CalcInstruction {
 	private static final List<String> if_keywords = Arrays.asList(new String[] { "if", "when", "whenever", "unless" });
 	private static final List<String> then_keywords = Arrays.asList(new String[] { "then" });
-	private static final List<String> else_keywords = Arrays.asList(new String[] { "else", "otherwise", "elseways",
-			"alternatively", "instead", "either", "rather", "oppositely" });
+	private static final List<String> else_keywords = Arrays
+			.asList(new String[] { "else", "otherwise", "elseways", "alternatively", "instead", "either", "rather", "oppositely" });
 
-	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally",
-			"when", "afterwards", "then", "later", "thereupon", "whereupon", "hereupon", "as", "previously" });
+	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally", "when", "afterwards",
+			"then", "later", "thereupon", "whereupon", "hereupon", "as", "previously" });
 
 	/**
 	 * This method calculates the instruction number for each word of the input
