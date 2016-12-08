@@ -372,7 +372,7 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	private List<List<Token>> sennaAndStanfordBatch(WordPosType list, File tempFile)
 			throws IOException, URISyntaxException, InterruptedException {
-		logger.info("Starting BATCHED pos tagging with Senna");
+		logger.info("Starting BATCHED pos tagging with Senna and Stanford");
 		//		Facade f = new Facade();
 		final CalcInstruction ci = new CalcInstruction();
 		final Stanford s = stanford;
@@ -581,6 +581,19 @@ public class ShallowNLP implements IPipelineStage {
 				final List<List<MainHypothesisToken>> hypotheses = new ArrayList<List<MainHypothesisToken>>();
 				hypotheses.add(prePipeData.getMainHypothesis());
 				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				if (taggedHypotheses.size() != hypotheses.size()) {
+					logger.error("Hypotheses and tagged Hypotheses size differs");
+					throw new PipelineStageException();
+				}
+				for (int i = 0; i < hypotheses.size(); i++) {
+					if (taggedHypotheses.get(i).size() != hypotheses.get(i).size()) {
+						logger.error("A Hypothesis and a tagged Hypothesis differ in size");
+						throw new PipelineStageException();
+					}
+					for (int j = 0; j < taggedHypotheses.get(i).size(); j++) {
+						taggedHypotheses.get(i).get(j).consumeHypothesisToken(hypotheses.get(i).get(j));
+					}
+				}
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
 				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
 				//TODO: add alternatives
