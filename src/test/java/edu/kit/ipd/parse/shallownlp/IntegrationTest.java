@@ -93,7 +93,7 @@ public class IntegrationTest {
 		hypothesis.add(h3);
 		hypothesis.add(h4);
 
-		ppd.setMainHypotheses(hypothesis);
+		ppd.setMainHypothesis(hypothesis);
 
 		try {
 			snlp.exec(ppd);
