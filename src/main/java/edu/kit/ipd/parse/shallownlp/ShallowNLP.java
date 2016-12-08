@@ -19,6 +19,7 @@ import edu.kit.ipd.parse.luna.data.PipelineDataCastException;
 import edu.kit.ipd.parse.luna.data.PrePipelineData;
 import edu.kit.ipd.parse.luna.data.token.Chunk;
 import edu.kit.ipd.parse.luna.data.token.ChunkIOB;
+import edu.kit.ipd.parse.luna.data.token.MainHypothesisToken;
 import edu.kit.ipd.parse.luna.data.token.POSTag;
 import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.data.token.WordPosType;
@@ -142,7 +143,7 @@ public class ShallowNLP implements IPipelineStage {
 	 * @throws URISyntaxException
 	 * @throws InterruptedException
 	 */
-	private List<List<Token>> parseBatch(List<List<String>> hypotheses, WordPosType wordPosList)
+	private List<List<Token>> parseBatch(List<List<MainHypothesisToken>> hypotheses, WordPosType wordPosList)
 			throws IOException, URISyntaxException, InterruptedException {
 		final List<List<Token>> result = new ArrayList<List<Token>>();
 		final File tempFile = writeBatchToTempFile(hypotheses);
@@ -169,13 +170,13 @@ public class ShallowNLP implements IPipelineStage {
 
 	}
 
-	private File writeBatchToTempFile(List<List<String>> hypotheses) throws IOException {
+	private File writeBatchToTempFile(List<List<MainHypothesisToken>> hypotheses) throws IOException {
 		PrintWriter writer;
 		final File tempFile = File.createTempFile("input", "txt");
 		writer = new PrintWriter(tempFile);
-		for (final List<String> hypothesis : hypotheses) {
-			for (final String line : hypothesis) {
-				writer.print(line + " ");
+		for (final List<MainHypothesisToken> hypothesis : hypotheses) {
+			for (final MainHypothesisToken hyp : hypothesis) {
+				writer.print(hyp.getWord() + " ");
 			}
 			writer.println(". ");
 		}
