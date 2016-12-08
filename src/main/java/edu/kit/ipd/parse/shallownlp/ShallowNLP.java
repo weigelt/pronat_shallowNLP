@@ -61,7 +61,7 @@ public class ShallowNLP implements IPipelineStage {
 	private Properties props;
 	private Stanford stanford;
 
-	private boolean imp, opt, containPeriods, excludeFillers;
+	private boolean imp, opt, containPeriods, excludeFillers, parseAlternatives;
 
 	private static List<String> fillers;
 
@@ -78,6 +78,7 @@ public class ShallowNLP implements IPipelineStage {
 		containPeriods = Boolean.parseBoolean(props.getProperty("PERIODS"));
 		excludeFillers = Boolean.parseBoolean(props.getProperty("EXCLUDE_FILLERS"));
 		opt = props.getProperty("MODE").equals("sennaandstanford");
+		parseAlternatives = Boolean.getBoolean(props.getProperty("ALTERNATIVES"));
 		fillers = new ArrayList<String>();
 		if (excludeFillers) {
 			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
@@ -547,26 +548,56 @@ public class ShallowNLP implements IPipelineStage {
 			throw new PipelineStageException(e);
 		}
 
-		// try to process on hypotheses. This is the default option
-		try {
-			final List<List<String>> hypotheses = prePipeData.getHypotheses();
-			final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
-			prePipeData.setTaggedHypotheses(taggedHypotheses);
-			final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
-			//TODO: add alternatives
-			prePipeData.setGraph(graphs.get(0));
-			return;
-		} catch (final MissingDataException e) {
-			logger.info("No utterance array to process, trying single input instead...");
-		} catch (final IOException e) {
-			logger.error("An IOException occured during run of SENNA", e);
-			throw new PipelineStageException(e);
-		} catch (final URISyntaxException e) {
-			logger.error("An URISyntaxException occured during initialization of SENNA", e);
-			throw new PipelineStageException(e);
-		} catch (final InterruptedException e) {
-			logger.error("The SENNA process interrupted unexpectedly", e);
-			throw new PipelineStageException(e);
+		if (parseAlternatives) {
+			// try to process on hypotheses. This is the default option
+			try {
+				final List<List<MainHypothesisToken>> hypotheses = prePipeData.getAltHypotheses();
+				hypotheses.add(0, prePipeData.getMainHypothesis());
+				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				prePipeData.setTaggedHypotheses(taggedHypotheses);
+				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
+				prePipeData.setGraph(graphs.get(0));
+				if (graphs.size() > 1) {
+					for (int i = 1; i < graphs.size(); i++) {
+						//TODO: add alternatives
+					}
+				}
+				return;
+			} catch (final MissingDataException e) {
+				logger.info("No main hypothesis to process, trying single input instead...");
+			} catch (final IOException e) {
+				logger.error("An IOException occured during run of SENNA", e);
+				throw new PipelineStageException(e);
+			} catch (final URISyntaxException e) {
+				logger.error("An URISyntaxException occured during initialization of SENNA", e);
+				throw new PipelineStageException(e);
+			} catch (final InterruptedException e) {
+				logger.error("The SENNA process interrupted unexpectedly", e);
+				throw new PipelineStageException(e);
+			}
+		} else {
+			// try to process on hypotheses. This is the default option
+			try {
+				final List<List<MainHypothesisToken>> hypotheses = new ArrayList<List<MainHypothesisToken>>();
+				hypotheses.add(prePipeData.getMainHypothesis());
+				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				prePipeData.setTaggedHypotheses(taggedHypotheses);
+				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
+				//TODO: add alternatives
+				prePipeData.setGraph(graphs.get(0));
+				return;
+			} catch (final MissingDataException e) {
+				logger.info("No main hypothesis to process, trying single input instead...");
+			} catch (final IOException e) {
+				logger.error("An IOException occured during run of SENNA", e);
+				throw new PipelineStageException(e);
+			} catch (final URISyntaxException e) {
+				logger.error("An URISyntaxException occured during initialization of SENNA", e);
+				throw new PipelineStageException(e);
+			} catch (final InterruptedException e) {
+				logger.error("The SENNA process interrupted unexpectedly", e);
+				throw new PipelineStageException(e);
+			}
 		}
 
 		// try to process on utterance array
