@@ -2,6 +2,7 @@ package edu.kit.ipd.parse.shallownlp;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import edu.kit.ipd.parse.luna.data.MissingDataException;
 import edu.kit.ipd.parse.luna.data.PrePipelineData;
+import edu.kit.ipd.parse.luna.data.token.MainHypothesisToken;
 import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
@@ -49,13 +51,13 @@ public class IntegrationTest {
 
 		try {
 			snlp.exec(ppd);
-		} catch (PipelineStageException e1) {
+		} catch (final PipelineStageException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
 			graph = ppd.getGraph();
-		} catch (MissingDataException e) {
+		} catch (final MissingDataException e) {
 			e.printStackTrace();
 		}
 		System.out.println(graph.showGraph());
@@ -77,23 +79,34 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testBatch() {
+	public void testHypothesis() {
 		ppd = new PrePipelineData();
-		List<List<String>> inputHypotheses = Arrays.asList(Arrays.asList("Armar", "go", "to", "the", "fridge"),
-				Arrays.asList("Are", "man", "gone", "to", "the", "bridge"));
-		ppd.setHypotheses(inputHypotheses);
+		final MainHypothesisToken h0 = new MainHypothesisToken("Armar", 0);
+		final MainHypothesisToken h1 = new MainHypothesisToken("go", 1);
+		final MainHypothesisToken h2 = new MainHypothesisToken("to", 2);
+		final MainHypothesisToken h3 = new MainHypothesisToken("the", 3);
+		final MainHypothesisToken h4 = new MainHypothesisToken("fridge", 4);
+		final List<MainHypothesisToken> hypothesis = new ArrayList<MainHypothesisToken>();
+		hypothesis.add(h0);
+		hypothesis.add(h1);
+		hypothesis.add(h2);
+		hypothesis.add(h3);
+		hypothesis.add(h4);
+
+		ppd.setMainHypotheses(hypothesis);
+
 		try {
 			snlp.exec(ppd);
-		} catch (PipelineStageException e) {
+		} catch (final PipelineStageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		try {
-			for (List<Token> list : ppd.getTaggedHypotheses()) {
+			for (final List<Token> list : ppd.getTaggedHypotheses()) {
 				System.out.println(Arrays.deepToString(list.toArray()));
 			}
-		} catch (MissingDataException e) {
+		} catch (final MissingDataException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
