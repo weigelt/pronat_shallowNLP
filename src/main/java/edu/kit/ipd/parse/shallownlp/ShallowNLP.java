@@ -461,6 +461,7 @@ public class ShallowNLP implements IPipelineStage {
 	 *            the token array
 	 * @return the ParseGraph
 	 */
+	@Deprecated
 	public IGraph createParseGraph(Token[] input) {
 		final IGraph graph = new ParseGraph();
 		INodeType wordType;
@@ -510,6 +511,7 @@ public class ShallowNLP implements IPipelineStage {
 		return graph;
 	}
 
+	@Deprecated
 	private List<IGraph> createBatchGraphs(List<List<Token>> hypotheses) {
 		final List<IGraph> graphs = new ArrayList<IGraph>();
 		for (final List<Token> hyp : hypotheses) {
