@@ -573,13 +573,13 @@ public class ShallowNLP implements IPipelineStage {
 				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
 				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
-				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
-				prePipeData.setGraph(graphs.get(0));
-				if (graphs.size() > 1) {
-					for (int i = 1; i < graphs.size(); i++) {
-						//TODO: add alternatives
-					}
-				}
+				//				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
+				//				prePipeData.setGraph(graphs.get(0));
+				//				if (graphs.size() > 1) {
+				//					for (int i = 1; i < graphs.size(); i++) {
+				//						//TODO: add alternatives
+				//					}
+				//				}
 				return;
 			} catch (final MissingDataException e) {
 				logger.info("No main hypothesis to process, trying single input instead...");
@@ -601,8 +601,8 @@ public class ShallowNLP implements IPipelineStage {
 				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
 				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
-				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
-				prePipeData.setGraph(graphs.get(0));
+				//				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
+				//				prePipeData.setGraph(graphs.get(0));
 				return;
 			} catch (final MissingDataException e) {
 				logger.info("No main hypothesis to process, trying single input instead...");
@@ -623,7 +623,7 @@ public class ShallowNLP implements IPipelineStage {
 			final String[] utterances = prePipeData.getTranscriptions();
 			final Token[] tokens = parse(utterances, null);
 			prePipeData.setTokens(tokens);
-			prePipeData.setGraph(createParseGraph(tokens));
+			//			prePipeData.setGraph(createParseGraph(tokens));
 			return;
 		} catch (final MissingDataException e) {
 			logger.info("No utterance array to process, trying single input instead...");
@@ -644,7 +644,7 @@ public class ShallowNLP implements IPipelineStage {
 			final String utterance = prePipeData.getTranscription();
 			final Token[] tokens = parse(utterance, null);
 			prePipeData.setTokens(tokens);
-			prePipeData.setGraph(createParseGraph(tokens));
+			//			prePipeData.setGraph(createParseGraph(tokens));
 			return;
 		} catch (final MissingDataException e) {
 			logger.error("No utterance to process, abborting...", e);
