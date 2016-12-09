@@ -518,6 +518,22 @@ public class ShallowNLP implements IPipelineStage {
 		return graphs;
 	}
 
+	private void transferTokenInformation(List<List<MainHypothesisToken>> source, List<List<Token>> sink) throws PipelineStageException {
+		if (sink.size() != source.size()) {
+			logger.error("Hypotheses and tagged Hypotheses size differs");
+			throw new PipelineStageException();
+		}
+		for (int i = 0; i < source.size(); i++) {
+			if (sink.get(i).size() != source.get(i).size()) {
+				logger.error("A Hypothesis and a tagged Hypothesis differ in size");
+				throw new PipelineStageException();
+			}
+			for (int j = 0; j < sink.get(i).size(); j++) {
+				sink.get(i).get(j).consumeHypothesisToken(source.get(i).get(j));
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -548,12 +564,14 @@ public class ShallowNLP implements IPipelineStage {
 			throw new PipelineStageException(e);
 		}
 
+		// try to process on hypotheses. This is the default option
 		if (parseAlternatives) {
-			// try to process on hypotheses. This is the default option
+			// MODE: main and alternative hypotheses
 			try {
 				final List<List<MainHypothesisToken>> hypotheses = prePipeData.getAltHypotheses();
 				hypotheses.add(0, prePipeData.getMainHypothesis());
 				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
 				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
 				prePipeData.setGraph(graphs.get(0));
@@ -576,27 +594,14 @@ public class ShallowNLP implements IPipelineStage {
 				throw new PipelineStageException(e);
 			}
 		} else {
-			// try to process on hypotheses. This is the default option
+			// MODE: only main hypothesis
 			try {
 				final List<List<MainHypothesisToken>> hypotheses = new ArrayList<List<MainHypothesisToken>>();
 				hypotheses.add(prePipeData.getMainHypothesis());
 				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
-				if (taggedHypotheses.size() != hypotheses.size()) {
-					logger.error("Hypotheses and tagged Hypotheses size differs");
-					throw new PipelineStageException();
-				}
-				for (int i = 0; i < hypotheses.size(); i++) {
-					if (taggedHypotheses.get(i).size() != hypotheses.get(i).size()) {
-						logger.error("A Hypothesis and a tagged Hypothesis differ in size");
-						throw new PipelineStageException();
-					}
-					for (int j = 0; j < taggedHypotheses.get(i).size(); j++) {
-						taggedHypotheses.get(i).get(j).consumeHypothesisToken(hypotheses.get(i).get(j));
-					}
-				}
+				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
 				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
-				//TODO: add alternatives
 				prePipeData.setGraph(graphs.get(0));
 				return;
 			} catch (final MissingDataException e) {
