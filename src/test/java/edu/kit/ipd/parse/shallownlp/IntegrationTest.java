@@ -48,26 +48,6 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void pipelineStageTest() {
-		ppd = new PrePipelineData();
-		ppd.setTranscription("Armar go to the fridge");
-
-		try {
-			snlp.exec(ppd);
-		} catch (final PipelineStageException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			graph = ppd.getGraph();
-		} catch (final MissingDataException e) {
-			e.printStackTrace();
-		}
-		System.out.println(graph.showGraph());
-
-	}
-
-	@Test
 	public void showUsrTokensOutput() {
 		input = "Armar go to the fridge .";
 		try {
