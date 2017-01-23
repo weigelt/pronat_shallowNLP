@@ -146,7 +146,6 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	private List<List<Token>> parseBatch(List<List<MainHypothesisToken>> hypotheses, WordPosType wordPosList)
 			throws IOException, URISyntaxException, InterruptedException {
-		final List<List<Token>> result = new ArrayList<List<Token>>();
 		final File tempFile = writeBatchToTempFile(hypotheses);
 		return shallowNLPBatch(wordPosList, tempFile);
 	}
@@ -191,6 +190,7 @@ public class ShallowNLP implements IPipelineStage {
 		} else {
 			return sennaAndStanford(list, tempFile);
 		}
+
 	}
 
 	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile)
@@ -358,6 +358,9 @@ public class ShallowNLP implements IPipelineStage {
 
 			resultList.add(Arrays.asList(createTokens(words, posSenna, instr, chunks)));
 		}
+		for (List<Token> tokenList : resultList) {
+			stanford.stemAndLemmatize(tokenList);
+		}
 		return resultList;
 	}
 
@@ -412,6 +415,9 @@ public class ShallowNLP implements IPipelineStage {
 			}
 
 			resultList.add(Arrays.asList(createTokens(words, posSenna, instr, chunks)));
+		}
+		for (List<Token> tokenList : resultList) {
+			stanford.stemAndLemmatize(tokenList);
 		}
 		return resultList;
 	}

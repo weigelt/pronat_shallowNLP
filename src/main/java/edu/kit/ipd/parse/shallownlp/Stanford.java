@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
+import edu.stanford.nlp.process.Morphology;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
 /**
@@ -22,10 +24,12 @@ public class Stanford {
 
 	Properties props;
 	MaxentTagger tagger;
+	Morphology morph;
 
 	Stanford() {
 		props = ConfigManager.getConfiguration(getClass());
 		tagger = new MaxentTagger(props.getProperty("TAGGER_MODEL"));
+		morph = new Morphology();
 	}
 
 	/**
@@ -36,7 +40,7 @@ public class Stanford {
 	 * @return the pos tags
 	 */
 	public String[] posTag(String[] text) {
-		
+
 		List<HasWord> sent = Sentence.toWordList(text);
 		List<TaggedWord> taggedSent = tagger.tagSentence(sent);
 		String[] result = new String[taggedSent.size()];
@@ -62,6 +66,21 @@ public class Stanford {
 			sentenceList.add(sentenceString.toString());
 		}
 		return sentenceList.toArray(new String[sentenceList.size()]);
+	}
+
+	/**
+	 * adds stemma and lemma to the specified {@link Token}s
+	 * 
+	 * @param text
+	 *            the {@link Token} to stem and lemmatize
+	 */
+	public void stemAndLemmatize(List<Token> text) {
+		for (Token token : text) {
+			String stemma = morph.stem(token.getWord());
+			String lemma = morph.lemma(token.getWord(), token.getPos().getTag(), true);
+			token.setLemma(lemma);
+			token.setStemma(stemma);
+		}
 	}
 
 }
