@@ -16,7 +16,7 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
 /**
  * This class represents a facade for Stanford CoreNLP
- * 
+ *
  * @author Markus Kocybik
  * @author Tobias Hey - MaxentTagger only loaded once (2016-07-28)
  */
@@ -34,7 +34,7 @@ public class Stanford {
 
 	/**
 	 * This method realizes pos tagging with the Stanford POS Tagger
-	 * 
+	 *
 	 * @param text
 	 *            the input text. Each element in the array represents one word.
 	 * @return the pos tags
@@ -52,7 +52,7 @@ public class Stanford {
 
 	/**
 	 * This method splits a text which contains periods
-	 * 
+	 *
 	 * @param text
 	 *            an input text with periods to split
 	 * @return each element in the array represents one sentence
@@ -69,17 +69,17 @@ public class Stanford {
 	}
 
 	/**
-	 * adds stemma and lemma to the specified {@link Token}s
-	 * 
+	 * adds stem and lemma to the specified {@link Token}s
+	 *
 	 * @param text
 	 *            the {@link Token} to stem and lemmatize
 	 */
 	public void stemAndLemmatize(List<Token> text) {
 		for (Token token : text) {
-			String stemma = morph.stem(token.getWord());
+			String stem = morph.stem(token.getWord());
 			String lemma = morph.lemma(token.getWord(), token.getPos().getTag(), true);
 			token.setLemma(lemma);
-			token.setStemma(stemma);
+			token.setStem(stem);
 		}
 	}
 
