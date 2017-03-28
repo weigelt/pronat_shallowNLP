@@ -65,6 +65,8 @@ public class ShallowNLP implements IPipelineStage {
 
 	private static List<String> fillers;
 
+	private WordPosType wordPosList;
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -83,6 +85,18 @@ public class ShallowNLP implements IPipelineStage {
 		if (excludeFillers) {
 			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
 		}
+		wordPosList = parseManualPos(props.getProperty("MANUAL_POS"));
+	}
+
+	private WordPosType parseManualPos(String concated) {
+		String[] splitted = concated.split(",");
+		String words[] = new String[splitted.length];
+		String pos[] = new String[splitted.length];
+		for (int i = 0; i < splitted.length; i++) {
+			words[i] = splitted[i].trim().split("_")[0];
+			pos[i] = splitted[i].trim().split("_")[1];
+		}
+		return new WordPosType(words, pos);
 	}
 
 	/**
@@ -578,7 +592,7 @@ public class ShallowNLP implements IPipelineStage {
 			try {
 				final List<List<MainHypothesisToken>> hypotheses = prePipeData.getAltHypotheses();
 				hypotheses.add(0, prePipeData.getMainHypothesis());
-				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, wordPosList);
 				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
 				//				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
@@ -606,7 +620,7 @@ public class ShallowNLP implements IPipelineStage {
 			try {
 				final List<List<MainHypothesisToken>> hypotheses = new ArrayList<List<MainHypothesisToken>>();
 				hypotheses.add(prePipeData.getMainHypothesis());
-				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, null);
+				final List<List<Token>> taggedHypotheses = parseBatch(hypotheses, wordPosList);
 				transferTokenInformation(hypotheses, taggedHypotheses);
 				prePipeData.setTaggedHypotheses(taggedHypotheses);
 				//				final List<IGraph> graphs = createBatchGraphs(taggedHypotheses);
