@@ -30,7 +30,8 @@ public class BrillRulesTest {
 
 	@BeforeClass
 	public static void setUp() {
-		rule = new POSRule("open", "JJ", "VB", "NOT NEXT_1_POS_NN AND NOT NEXT_1_POS_NNS AND NOT NEXT_1_POS_NNP AND NOT NEXT_1_POS_NNPS");
+		rule = new POSRule("open", "JJ", "VB",
+				"NOT NEXT_1_POS_NN AND NOT NEXT_1_POS_NNS AND NOT NEXT_1_POS_NNP AND NOT NEXT_1_POS_NNPS AND NOT PREV_1_POS_VB AND NOT PREV_1_POS_VBD AND NOT PREV_1_POS_VBG AND NOT PREV_1_POS_VBN AND NOT PREV_1_POS_VBP AND NOT PREV_1_POS_VBZ");
 	}
 
 	@Test
