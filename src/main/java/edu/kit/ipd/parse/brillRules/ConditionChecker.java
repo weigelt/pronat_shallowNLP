@@ -3,11 +3,22 @@
  */
 package edu.kit.ipd.parse.brillRules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Tobias Hey
  *
  */
 public class ConditionChecker {
+
+	private static List<IConditionPart> partChecker;
+
+	static {
+		partChecker = new ArrayList<>();
+		partChecker.add(new NextPart());
+		partChecker.add(new PrevPart());
+	}
 
 	private enum BooleanOperators {
 		AND("AND"), OR("OR"), NOT("NOT"), XOR("XOR");
@@ -42,7 +53,11 @@ public class ConditionChecker {
 					result = result ^ checkCondition(buildCondition(condParts, 0), words, posTags, chunks, currIndex);
 				}
 			} else {
-
+				for (IConditionPart pChecker : partChecker) {
+					if (pChecker.isPartOfType(part)) {
+						result = pChecker.checkPart(part, words, posTags, chunks, currIndex);
+					}
+				}
 			}
 		} else {
 			return true;
