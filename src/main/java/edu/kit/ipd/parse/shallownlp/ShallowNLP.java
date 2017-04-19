@@ -13,6 +13,9 @@ import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.kit.ipd.parse.brillRules.ChunkRule;
+import edu.kit.ipd.parse.brillRules.IRule;
+import edu.kit.ipd.parse.brillRules.POSRule;
 import edu.kit.ipd.parse.luna.data.AbstractPipelineData;
 import edu.kit.ipd.parse.luna.data.MissingDataException;
 import edu.kit.ipd.parse.luna.data.PipelineDataCastException;
@@ -67,6 +70,8 @@ public class ShallowNLP implements IPipelineStage {
 
 	private WordPosType wordPosList;
 
+	private List<IRule> brillRules;
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -85,18 +90,37 @@ public class ShallowNLP implements IPipelineStage {
 		if (excludeFillers) {
 			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
 		}
-		wordPosList = parseManualPos(props.getProperty("MANUAL_POS"));
+		brillRules = parseBrillRules(props.getProperty("BRILL_RULES"));
 	}
 
-	private WordPosType parseManualPos(String concated) {
-		String[] splitted = concated.split(",");
-		String words[] = new String[splitted.length];
-		String pos[] = new String[splitted.length];
+	private List<IRule> parseBrillRules(String input) {
+		List<IRule> result = new ArrayList<>();
+		String[] splitted = input.trim().split(";");
 		for (int i = 0; i < splitted.length; i++) {
-			words[i] = splitted[i].trim().split("_")[0];
-			pos[i] = splitted[i].trim().split("_")[1];
+			String rule = splitted[i];
+			String[] ruleParts = rule.trim().split(" ", 5);
+			if (ruleParts.length < 4) {
+				logger.warn("Brill rule wasn't specified correctly: " + rule);
+				continue;
+			}
+			String type = ruleParts[0];
+			String word = ruleParts[1];
+			String from = ruleParts[2];
+			String to = ruleParts[3];
+			String condition = ruleParts[4];
+			if (condition.contains("[")) {
+				condition = condition.replaceAll("\\[", "").trim().replaceAll("\\]", "").trim();
+			}
+			if (type.equals("POS")) {
+				result.add(new POSRule(word, from, to, condition));
+			} else if (type.equals("CHK")) {
+				result.add(new ChunkRule(word, from, to, condition));
+			} else {
+				logger.warn("Brill rule has no correct type: " + type);
+				continue;
+			}
 		}
-		return new WordPosType(words, pos);
+		return result;
 	}
 
 	/**
@@ -307,9 +331,27 @@ public class ShallowNLP implements IPipelineStage {
 			} else {
 				pos[i] = posSenna[i];
 			}
+
+		}
+		//apply brill_Pos Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof POSRule) {
+					brRule.applyRule(words, pos, new String[] {}, i);
+				}
+			}
 		}
 
 		final String[] chunks = new Facade().parse(words, pos);
+
+		//apply brill_chk Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof ChunkRule) {
+					brRule.applyRule(words, pos, chunks, i);
+				}
+			}
+		}
 
 		int[] instr = new int[words.length];
 		if (imp) {
