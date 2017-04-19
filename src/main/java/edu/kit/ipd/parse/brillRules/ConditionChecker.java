@@ -55,7 +55,7 @@ public class ConditionChecker {
 			} else {
 				for (IConditionPart pChecker : partChecker) {
 					if (pChecker.isPartOfType(condParts[0])) {
-						result = !pChecker.checkPart(condParts[0], words, posTags, chunks, currIndex);
+						result = pChecker.checkPart(condParts[0], words, posTags, chunks, currIndex);
 						index = 1;
 						break;
 					}
