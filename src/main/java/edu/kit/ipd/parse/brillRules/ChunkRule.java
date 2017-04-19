@@ -38,6 +38,10 @@ public class ChunkRule implements IRule {
 		if (chunks[currIndex].equalsIgnoreCase(to)) {
 			return false;
 		}
+		if (ConditionChecker.checkCondition(condition, words, posTags, chunks, currIndex)) {
+			chunks[currIndex] = to;
+			return true;
+		}
 		return false;
 	}
 

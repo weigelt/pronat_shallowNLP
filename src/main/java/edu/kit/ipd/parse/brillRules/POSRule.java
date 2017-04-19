@@ -38,6 +38,10 @@ public class POSRule implements IRule {
 		if (posTags[currIndex].equalsIgnoreCase(to)) {
 			return false;
 		}
+		if (ConditionChecker.checkCondition(condition, words, posTags, chunks, currIndex)) {
+			posTags[currIndex] = to;
+			return true;
+		}
 		return false;
 	}
 
