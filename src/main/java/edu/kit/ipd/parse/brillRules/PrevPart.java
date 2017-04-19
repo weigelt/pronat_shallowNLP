@@ -19,6 +19,12 @@ public class PrevPart implements IConditionPart {
 		private Types(String op) {
 			this.op = op;
 		};
+
+		@Override
+		public String toString() {
+
+			return this.op;
+		}
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(PrevPart.class);
