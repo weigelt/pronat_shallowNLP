@@ -274,7 +274,25 @@ public class ShallowNLP implements IPipelineStage {
 			}
 		}
 
+		//apply brill_Pos Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof POSRule) {
+					brRule.applyRule(words, pos, new String[] {}, i);
+				}
+			}
+		}
+
 		final String[] chunks = new Facade().parse(words, pos);
+
+		//apply brill_chk Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof ChunkRule) {
+					brRule.applyRule(words, pos, chunks, i);
+				}
+			}
+		}
 
 		int[] instr = new int[words.length];
 		if (imp) {
@@ -399,7 +417,25 @@ public class ShallowNLP implements IPipelineStage {
 				}
 			}
 
+			//apply brill_Pos Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof POSRule) {
+						brRule.applyRule(words, posSenna, new String[] {}, i);
+					}
+				}
+			}
+
 			final String[] chunks = new Facade().parse(words, posSenna);
+
+			//apply brill_chk Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof ChunkRule) {
+						brRule.applyRule(words, posSenna, chunks, i);
+					}
+				}
+			}
 
 			int[] instr = new int[words.length];
 			if (imp) {
@@ -457,7 +493,25 @@ public class ShallowNLP implements IPipelineStage {
 				}
 			}
 
+			//apply brill_Pos Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof POSRule) {
+						brRule.applyRule(words, posSenna, new String[] {}, i);
+					}
+				}
+			}
+
 			final String[] chunks = new Facade().parse(words, posSenna);
+
+			//apply brill_chk Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof ChunkRule) {
+						brRule.applyRule(words, posSenna, chunks, i);
+					}
+				}
+			}
 
 			int[] instr = new int[words.length];
 			if (imp) {
