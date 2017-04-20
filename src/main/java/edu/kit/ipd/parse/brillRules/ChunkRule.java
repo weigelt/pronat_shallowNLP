@@ -4,6 +4,8 @@
 package edu.kit.ipd.parse.brillRules;
 
 /**
+ * Represents a brill rule checking chunk tags
+ * 
  * @author Tobias Hey
  *
  */

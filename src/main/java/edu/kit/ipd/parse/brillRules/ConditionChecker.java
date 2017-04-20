@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Helper class to check a given condition
+ *
  * @author Tobias Hey
  *
  */
@@ -39,16 +41,32 @@ public class ConditionChecker {
 		}
 	}
 
+	/**
+	 * Checks if the given condition is fulfilled.
+	 *
+	 * @param condition
+	 *            textual representation of the condition
+	 * @param words
+	 *            The word Array
+	 * @param posTags
+	 *            The pos tag Array
+	 * @param chunks
+	 *            the chunk tag Array (IOB-Format)
+	 * @param currIndex
+	 *            The index of the word the rule is applied on
+	 * @return if the given condition is fulfilled
+	 */
 	public static boolean checkCondition(String condition, String[] words, String[] posTags, String[] chunks, int currIndex) {
 		boolean result = false;
 		String[] condParts = condition.trim().split(" ");
 		if (condParts.length != 0 && !condition.equals("")) {
-			int index = 1;
+			int nextIndex = 1;
+			// is condition starting with NOT?
 			if (condParts.length > 1 && condParts[0].equalsIgnoreCase(BooleanOperators.NOT.toString())) {
 				for (IConditionPart pChecker : partChecker) {
 					if (pChecker.isPartOfType(condParts[1])) {
 						result = !pChecker.checkPart(condParts[1], words, posTags, chunks, currIndex);
-						index = 2;
+						nextIndex = 2;
 						break;
 					}
 				}
@@ -56,24 +74,24 @@ public class ConditionChecker {
 				for (IConditionPart pChecker : partChecker) {
 					if (pChecker.isPartOfType(condParts[0])) {
 						result = pChecker.checkPart(condParts[0], words, posTags, chunks, currIndex);
-						index = 1;
+						nextIndex = 1;
 						break;
 					}
 				}
 			}
-			if (index < condParts.length) {
-				String part = condParts[index];
+			if (nextIndex < condParts.length) {
+				String part = condParts[nextIndex];
 				if (part.equalsIgnoreCase(BooleanOperators.AND.toString())) {
 
-					result = result && checkCondition(buildCondition(condParts, index), words, posTags, chunks, currIndex);
+					result = result && checkCondition(buildCondition(condParts, nextIndex), words, posTags, chunks, currIndex);
 
 				} else if (part.equalsIgnoreCase(BooleanOperators.OR.toString())) {
 
-					result = result || checkCondition(buildCondition(condParts, index), words, posTags, chunks, currIndex);
+					result = result || checkCondition(buildCondition(condParts, nextIndex), words, posTags, chunks, currIndex);
 
 				} else if (part.equalsIgnoreCase(BooleanOperators.XOR.toString())) {
 
-					result = result ^ checkCondition(buildCondition(condParts, index), words, posTags, chunks, currIndex);
+					result = result ^ checkCondition(buildCondition(condParts, nextIndex), words, posTags, chunks, currIndex);
 
 				} else {
 					logger.warn("Parts of the specified Condition are not combined by a boolean operator. Rule: " + condition);

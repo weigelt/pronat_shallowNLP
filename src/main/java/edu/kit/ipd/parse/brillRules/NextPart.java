@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Represents a {@link IConditionPart} checking attributes of words succeeding
+ * the current word
+ *
  * @author Tobias Hey
  *
  */
