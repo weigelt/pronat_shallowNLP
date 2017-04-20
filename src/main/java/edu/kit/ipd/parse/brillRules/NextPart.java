@@ -47,6 +47,11 @@ public class NextPart implements IConditionPart {
 				String expected = parts[3];
 				int i = currIndex + index;
 				if (i < words.length) {
+
+					//skip interjections
+					if (posTags[i].equalsIgnoreCase("UH") && i + 1 < words.length) {
+						i++;
+					}
 					if (type.equalsIgnoreCase(Types.POS.toString())) {
 						if (posTags[i].equalsIgnoreCase(expected)) {
 							return true;
