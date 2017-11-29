@@ -35,16 +35,28 @@ public class IntegrationTest {
 
 	@Test
 	public void showSingleStringOutput() {
-		input = "Armar go to the fridge.";
+		input = "If there are any dirty dishes";
 		try {
 			actual = snlp.parse(input, null);
 		} catch (IOException | URISyntaxException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String words = "";
+		String pos = "";
+		String chks = "";
+		for (int i = 0; i < actual.length; i++) {
+			Token t = actual[i];
+			words += "\"" + t.getWord() + "\", ";
+			pos += "\"" + t.getPos().toString() + "\", ";
+			chks += "\"" + t.getChunkIOB() + "\", ";
+		}
+		System.out.println(words);
+		System.out.println(pos);
+		System.out.println(chks);
 		System.out.println(Arrays.deepToString(actual));
-		graph = snlp.createParseGraph(actual);
-		graph.showGraph();
+		//graph = snlp.createParseGraph(actual);
+		//graph.showGraph();
 	}
 
 	@Test
