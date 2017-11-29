@@ -1,6 +1,8 @@
+before_script:
+    - rm ~/.parse/edu.kit.ipd.parse.shallownlp.ShallowNLP.conf
+    - rm ~/.parse/edu.kit.ipd.parse.shallownlp.Stanford.conf
 master:
     script:
-        - rm ~/.parse/edu.kit.ipd.parse.shallownlp.ShallowNLP.conf
         - mvn source:jar deploy -B
     tags:
         - mvn
