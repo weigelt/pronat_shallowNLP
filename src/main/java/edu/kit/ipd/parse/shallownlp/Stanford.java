@@ -8,7 +8,7 @@ import java.util.Properties;
 import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.SentenceUtils;
+import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.Morphology;
@@ -41,7 +41,7 @@ public class Stanford {
 	 */
 	public String[] posTag(String[] text) {
 
-		List<HasWord> sent = SentenceUtils.toWordList(text);
+		List<HasWord> sent = Sentence.toWordList(text);
 		List<TaggedWord> taggedSent = tagger.tagSentence(sent);
 		String[] result = new String[taggedSent.size()];
 		for (int i = 0; i < taggedSent.size(); i++) {
@@ -62,7 +62,7 @@ public class Stanford {
 		List<String> sentenceList = new ArrayList<String>();
 
 		for (List<HasWord> sentence : dp) {
-			String sentenceString = SentenceUtils.listToString(sentence);
+			String sentenceString = Sentence.listToString(sentence);
 			sentenceList.add(sentenceString.toString());
 		}
 		return sentenceList.toArray(new String[sentenceList.size()]);
