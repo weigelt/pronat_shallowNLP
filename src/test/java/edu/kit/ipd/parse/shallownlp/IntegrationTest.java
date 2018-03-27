@@ -35,7 +35,7 @@ public class IntegrationTest {
 
 	@Test
 	public void showSingleStringOutput() {
-		input = "If there are any dirty dishes";
+		input = "robo go to the dishwasher and open it until the dishwasher is empty take an item from the dishwasher and put it into the cupboard";
 		try {
 			actual = snlp.parse(input, null);
 		} catch (IOException | URISyntaxException | InterruptedException e) {
