@@ -63,8 +63,9 @@ public class ShallowNLP implements IPipelineStage {
 
 	private Properties props;
 	private Stanford stanford;
+	private CalcInstruction ci;
 
-	private boolean imp, opt, containPeriods, excludeFillers, parseAlternatives;
+	private boolean imp, opt, stanfordOnly, containPeriods, excludeFillers, parseAlternatives;
 
 	private static List<String> fillers;
 
@@ -81,11 +82,13 @@ public class ShallowNLP implements IPipelineStage {
 	public void init() {
 		props = ConfigManager.getConfiguration(getClass());
 		stanford = new Stanford();
+		ci = new CalcInstruction();
 		imp = Boolean.parseBoolean(props.getProperty("IMPERATIVE"));
 		containPeriods = Boolean.parseBoolean(props.getProperty("PERIODS"));
 		excludeFillers = Boolean.parseBoolean(props.getProperty("EXCLUDE_FILLERS"));
 		opt = props.getProperty("MODE").equals("sennaandstanford");
-		parseAlternatives = Boolean.getBoolean(props.getProperty("ALTERNATIVES"));
+		stanfordOnly = props.getProperty("MODE").equals("stanford");
+		parseAlternatives = Boolean.parseBoolean(props.getProperty("ALTERNATIVES"));
 		fillers = new ArrayList<String>();
 		if (excludeFillers) {
 			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
@@ -148,7 +151,7 @@ public class ShallowNLP implements IPipelineStage {
 			// opt = false;
 		}
 		tempFile = writeToTempFile(input);
-		return shallowNLP(wordPosList, tempFile);
+		return shallowNLP(input, wordPosList, tempFile);
 	}
 
 	/**
@@ -165,7 +168,7 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	public Token[] parse(String[] text, WordPosType wordPosList) throws IOException, URISyntaxException, InterruptedException {
 		final File tempFile = writeToTempFile(text);
-		return shallowNLP(wordPosList, tempFile);
+		return shallowNLP(text, wordPosList, tempFile);
 	}
 
 	/**
@@ -184,8 +187,20 @@ public class ShallowNLP implements IPipelineStage {
 	 */
 	private List<List<Token>> parseBatch(List<List<MainHypothesisToken>> hypotheses, WordPosType wordPosList)
 			throws IOException, URISyntaxException, InterruptedException {
-		final File tempFile = writeBatchToTempFile(hypotheses);
-		return shallowNLPBatch(wordPosList, tempFile);
+		List<List<Token>> tokens;
+		if (stanfordOnly) {
+			tokens = onlyStanfordBatch(hypotheses, wordPosList);
+		} else {
+			File tempFile = writeBatchToTempFile(hypotheses);
+			if (!opt) {
+
+				tokens = onlySennaBatch(tempFile);
+
+			} else {
+				tokens = sennaAndStanfordBatch(wordPosList, tempFile);
+			}
+		}
+		return tokens;
 	}
 
 	/**
@@ -222,22 +237,17 @@ public class ShallowNLP implements IPipelineStage {
 		return tempFile;
 	}
 
-	private Token[] shallowNLP(WordPosType list, File tempFile) throws IOException, URISyntaxException, InterruptedException {
+	private Token[] shallowNLP(String[] sentenceArray, WordPosType list, File tempFile)
+			throws IOException, URISyntaxException, InterruptedException {
+		if (stanfordOnly) {
+			return onlyStanford(sentenceArray, list);
+		}
 		if (!opt) {
 			return onlySenna(tempFile);
 		} else {
 			return sennaAndStanford(list, tempFile);
 		}
 
-	}
-
-	private List<List<Token>> shallowNLPBatch(WordPosType wordPosList, File tempFile)
-			throws IOException, URISyntaxException, InterruptedException {
-		if (!opt) {
-			return onlySennaBatch(tempFile);
-		} else {
-			return sennaAndStanfordBatch(wordPosList, tempFile);
-		}
 	}
 
 	/**
@@ -297,7 +307,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+				instr = ci.calculateInstructionNumber(words, pos);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -306,6 +316,66 @@ public class ShallowNLP implements IPipelineStage {
 		}
 
 		return createTokens(words, pos, instr, chunks);
+	}
+
+	/**
+	 * This method realizes the pos tagging with Stanford.
+	 *
+	 * @param list
+	 *            fix list of words which should be tagged as verbs is only used
+	 *            if the parameter opt is true
+	 * @param tempFile
+	 * @return a token array which is the result of parsing
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
+	 */
+	private Token[] onlyStanford(String[] sentenceArray, WordPosType list) throws IOException, URISyntaxException, InterruptedException {
+		logger.info("using stanford core nlp for pos tagging");
+		List<String> wordList = new ArrayList<>();
+		for (final String line : sentenceArray) {
+			for (String string : line.trim().split(" ")) {
+				wordList.add(string.trim());
+			}
+
+		}
+		final String[] words = wordList.toArray(new String[wordList.size()]);
+
+		final String[] pos = stanford.posTag(words);
+
+		//apply brill_Pos Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof POSRule) {
+					brRule.applyRule(words, pos, new String[] {}, i);
+				}
+			}
+		}
+
+		final String[] chunks = new Facade().parse(words, pos);
+
+		//apply brill_chk Rules
+		for (int i = 0; i < words.length; i++) {
+			for (IRule brRule : brillRules) {
+				if (brRule instanceof ChunkRule) {
+					brRule.applyRule(words, pos, chunks, i);
+				}
+			}
+		}
+
+		int[] instr = new int[words.length];
+		if (imp) {
+			try {
+				instr = ci.calculateInstructionNumber(words, pos);
+			} catch (final IllegalArgumentException e) {
+				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
+				Arrays.fill(instr, -1);
+			}
+		}
+		List<Token> tokenList = Arrays.asList(createTokens(words, pos, instr, chunks));
+		stanford.stemAndLemmatize(tokenList);
+
+		return tokenList.toArray(new Token[tokenList.size()]);
 	}
 
 	/**
@@ -374,7 +444,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = new CalcInstruction().calculateInstructionNumber(words, pos);
+				instr = ci.calculateInstructionNumber(words, pos);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -396,7 +466,6 @@ public class ShallowNLP implements IPipelineStage {
 	private List<List<Token>> onlySennaBatch(File tempFile) throws IOException, URISyntaxException, InterruptedException {
 		logger.info("Starting BATCHED pos tagging with Senna");
 		//		Facade f = new Facade();
-		final CalcInstruction ci = new CalcInstruction();
 		final List<List<Token>> resultList = new ArrayList<List<Token>>();
 		final List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
 		final List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
@@ -457,6 +526,75 @@ public class ShallowNLP implements IPipelineStage {
 	}
 
 	/**
+	 * This method realizes the batched pos tagging with Stanford.
+	 *
+	 * @param tempFile
+	 * @return A List of Token-Arrays which is the result of batched parsing
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws URISyntaxException
+	 */
+	private List<List<Token>> onlyStanfordBatch(List<List<MainHypothesisToken>> hypotheses, WordPosType list)
+			throws IOException, URISyntaxException, InterruptedException {
+		logger.info("Starting BATCHED pos tagging with Stanford");
+		//		Facade f = new Facade();
+		final Stanford s = stanford;
+		final List<List<Token>> resultList = new ArrayList<List<Token>>();
+		//final List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
+		//final List<List<WordSennaResult>> debatchedList = generateDebatchedWordSennaResultList(sennaParse);
+		List<String> wordList = new ArrayList<>();
+		for (List<MainHypothesisToken> tokenList : hypotheses) {
+			for (MainHypothesisToken token : tokenList) {
+				wordList.add(token.getWord());
+			}
+		}
+		String[] words = wordList.toArray(new String[wordList.size()]);
+
+		String[] pos = s.posTag(words);
+		List<WordPosType> debatchedList = generateDebatchedList(words, pos);
+		for (final WordPosType curWpt : debatchedList) {
+			words = curWpt.getWords();
+			pos = curWpt.getPos();
+			//apply brill_Pos Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof POSRule) {
+						brRule.applyRule(words, pos, new String[] {}, i);
+					}
+				}
+			}
+
+			final String[] chunks = new Facade().parse(words, pos);
+
+			//apply brill_chk Rules
+			for (int i = 0; i < words.length; i++) {
+				for (IRule brRule : brillRules) {
+					if (brRule instanceof ChunkRule) {
+						brRule.applyRule(words, pos, chunks, i);
+					}
+				}
+			}
+
+			int[] instr = new int[words.length];
+			if (imp) {
+				try {
+					instr = ci.calculateInstructionNumber(words, pos);
+				} catch (final IllegalArgumentException e) {
+					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
+					Arrays.fill(instr, -1);
+				}
+
+			}
+
+			resultList.add(Arrays.asList(createTokens(words, pos, instr, chunks)));
+		}
+		for (List<Token> tokenList : resultList) {
+			stanford.stemAndLemmatize(tokenList);
+		}
+		return resultList;
+	}
+
+	/**
 	 * This method realizes the batched pos tagging with SENNA and Stanford.
 	 *
 	 * @param tempFile
@@ -469,7 +607,6 @@ public class ShallowNLP implements IPipelineStage {
 			throws IOException, URISyntaxException, InterruptedException {
 		logger.info("Starting BATCHED pos tagging with Senna and Stanford");
 		//		Facade f = new Facade();
-		final CalcInstruction ci = new CalcInstruction();
 		final Stanford s = stanford;
 		final List<List<Token>> resultList = new ArrayList<List<Token>>();
 		final List<WordSennaResult> sennaParse = new Senna(new String[] { "-usrtokens", "-pos" }).parse(tempFile);
@@ -530,6 +667,30 @@ public class ShallowNLP implements IPipelineStage {
 			stanford.stemAndLemmatize(tokenList);
 		}
 		return resultList;
+	}
+
+	private List<WordPosType> generateDebatchedList(String[] words, String[] pos) {
+		final List<WordPosType> debatched = new ArrayList<WordPosType>();
+		List<String> currentWords = new ArrayList<>();
+		List<String> currentPos = new ArrayList<>();
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			String posTag = pos[i];
+			if (!word.equals(".")) {
+				currentWords.add(word);
+				currentPos.add(posTag);
+			} else {
+				String[] wordArray = currentWords.toArray(new String[currentWords.size()]);
+				String[] posArray = currentPos.toArray(new String[currentPos.size()]);
+				debatched.add(new WordPosType(wordArray, posArray));
+				currentWords = new ArrayList<String>();
+				currentPos = new ArrayList<String>();
+			}
+		}
+		if (debatched.isEmpty() && !currentWords.isEmpty()) {
+			debatched.add(new WordPosType(words, pos));
+		}
+		return debatched;
 	}
 
 	List<List<WordSennaResult>> generateDebatchedWordSennaResultList(List<WordSennaResult> sennaParse) {
