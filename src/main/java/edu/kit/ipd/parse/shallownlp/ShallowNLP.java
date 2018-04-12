@@ -343,6 +343,13 @@ public class ShallowNLP implements IPipelineStage {
 
 		final String[] pos = stanford.posTag(words);
 
+		// exclude fillers
+		for (int i = 0; i < words.length; i++) {
+			if (fillers.contains(words[i].toLowerCase())) {
+				pos[i] = POSTag.INTERJECTION.getTag();
+			}
+		}
+
 		//apply brill_Pos Rules
 		for (int i = 0; i < words.length; i++) {
 			for (IRule brRule : brillRules) {
@@ -555,6 +562,14 @@ public class ShallowNLP implements IPipelineStage {
 		for (final WordPosType curWpt : debatchedList) {
 			words = curWpt.getWords();
 			pos = curWpt.getPos();
+
+			// exclude fillers
+			for (int i = 0; i < words.length; i++) {
+				if (fillers.contains(words[i].toLowerCase())) {
+					pos[i] = POSTag.INTERJECTION.getTag();
+				}
+			}
+
 			//apply brill_Pos Rules
 			for (int i = 0; i < words.length; i++) {
 				for (IRule brRule : brillRules) {
