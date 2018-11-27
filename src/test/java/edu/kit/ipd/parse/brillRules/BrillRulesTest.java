@@ -1,8 +1,13 @@
 package edu.kit.ipd.parse.brillRules;
 
+import java.util.Properties;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
+import edu.kit.ipd.parse.shallownlp.Stanford;
 
 /**
  *
@@ -28,8 +33,12 @@ public class BrillRulesTest {
 
 	static IRule rule;
 
+	private static Properties props;
+
 	@BeforeClass
 	public static void setUp() {
+		props = ConfigManager.getConfiguration(Stanford.class);
+		props.setProperty("TAGGER_MODEL", "/edu/stanford/nlp/models/pos-tagger/english-bidirectional/english-bidirectional-distsim.tagger");
 		rule = new POSRule("open", "JJ", "VB",
 				"NOT NEXT_1_POS_NN AND NOT NEXT_1_POS_NNS AND NOT NEXT_1_POS_NNP AND NOT NEXT_1_POS_NNPS AND NOT PREV_1_POS_VB AND NOT PREV_1_POS_VBD AND NOT PREV_1_POS_VBG AND NOT PREV_1_POS_VBN AND NOT PREV_1_POS_VBP AND NOT PREV_1_POS_VBZ");
 	}

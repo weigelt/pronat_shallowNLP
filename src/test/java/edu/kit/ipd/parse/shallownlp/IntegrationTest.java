@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import edu.kit.ipd.parse.luna.data.token.MainHypothesisToken;
 import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
 public class IntegrationTest {
 
@@ -26,9 +28,12 @@ public class IntegrationTest {
 	Token[] actual;
 	IGraph graph;
 	PrePipelineData ppd;
+	private static Properties props;
 
 	@BeforeClass
 	public static void setUp() {
+		props = ConfigManager.getConfiguration(Stanford.class);
+		props.setProperty("TAGGER_MODEL", "/edu/stanford/nlp/models/pos-tagger/english-bidirectional/english-bidirectional-distsim.tagger");
 		snlp = new ShallowNLP();
 		snlp.init();
 	}
