@@ -31,62 +31,17 @@ public class CalcInstruction {
 	 * @return the instruction number for each word
 	 * 
 	 * @throws IllegalArgumentException
-	 *             throws an exception if word aaray and pos array have
+	 *             throws an exception if word array and pos array have
 	 *             different lengths
 	 */
-	public int[] calculateInstructionNumber(String[] words, String[] pos) throws IllegalArgumentException {
+	int[] calculateInstructionNumber(String[] words, String[] pos, boolean legacyCalcInstrMode) throws IllegalArgumentException {
 		if (words.length == pos.length) {
-			int[] list = new int[words.length];
-			int instrNr = 0;
-			int verbCounter = 0;
-			for (int i = 0; i < words.length; i++) {
-
-				if (isInstructionBoundary(words[i])) {
-					// no verb in between boundaries resets instructionNumber
-					// and extends previous instruction
-					if (verbCounter == 0) {
-						resetLastInstruction(list, instrNr);
-						list[i] = instrNr;
-
-					} else {
-						verbCounter = 0;
-						instrNr++;
-						list[i] = instrNr;
-					}
-				} else {
-					// search Verb
-					if (verbCounter == 0) {
-						// special case: two verbs in a row
-						if (pos[i].startsWith("VB") && i < words.length - 1 && pos[i + 1].startsWith("VB")) {
-							list[i] = instrNr;
-							list[i + 1] = instrNr;
-							i++;
-							verbCounter++;
-						}
-						// verb found
-						else if (pos[i].startsWith("VB")) {
-							list[i] = instrNr;
-							verbCounter++;
-						}
-						// no verb found
-						else {
-							list[i] = instrNr;
-						}
-					} else {
-						// another verb also initiates a new instruction
-						// (imperative sentence)
-						if (pos[i].startsWith("VB")) {
-							instrNr++;
-							verbCounter = 0;
-							i--; // repeat loop
-						} else {
-							list[i] = instrNr;
-						}
-					}
-				}
-
+			if (legacyCalcInstrMode){
+				return calculateInstructionNumberLegacy(words, pos);
 			}
-			return list;
+			else {
+				return calculateInstructionNumberAdvanced(words, pos);
+			}
 		} else {
 			throw new IllegalArgumentException("word array and pos array have different lengths");
 		}
@@ -100,6 +55,65 @@ public class CalcInstruction {
 			return true;
 		}
 		return false;
+	}
+
+	private int[] calculateInstructionNumberAdvanced(String[] words, String[] pos){
+		// TODO: implement me!
+		return null;
+	}
+
+	private int[] calculateInstructionNumberLegacy(String[] words, String[] pos){
+		int[] list = new int[words.length];
+		int instrNr = 0;
+		int verbCounter = 0;
+		for (int i = 0; i < words.length; i++) {
+
+			if (isInstructionBoundary(words[i])) {
+				// no verb in between boundaries resets instructionNumber
+				// and extends previous instruction
+				if (verbCounter == 0) {
+					resetLastInstruction(list, instrNr);
+					list[i] = instrNr;
+
+				} else {
+					verbCounter = 0;
+					instrNr++;
+					list[i] = instrNr;
+				}
+			} else {
+				// search Verb
+				if (verbCounter == 0) {
+					// special case: two verbs in a row
+					if (pos[i].startsWith("VB") && i < words.length - 1 && pos[i + 1].startsWith("VB")) {
+						list[i] = instrNr;
+						list[i + 1] = instrNr;
+						i++;
+						verbCounter++;
+					}
+					// verb found
+					else if (pos[i].startsWith("VB")) {
+						list[i] = instrNr;
+						verbCounter++;
+					}
+					// no verb found
+					else {
+						list[i] = instrNr;
+					}
+				} else {
+					// another verb also initiates a new instruction
+					// (imperative sentence)
+					if (pos[i].startsWith("VB")) {
+						instrNr++;
+						verbCounter = 0;
+						i--; // repeat loop
+					} else {
+						list[i] = instrNr;
+					}
+				}
+			}
+
+		}
+		return list;
 	}
 
 	private void resetLastInstruction(int[] list, int instrNum) {

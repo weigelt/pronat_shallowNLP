@@ -65,9 +65,7 @@ public class ShallowNLP implements IPipelineStage {
 	private Stanford stanford;
 	private CalcInstruction ci;
 
-	private boolean imp, opt, stanfordOnly, containPeriods, excludeFillers, parseAlternatives;
-
-	boolean legacyCalcInstrMode;
+	private boolean imp, opt, stanfordOnly, containPeriods, excludeFillers, parseAlternatives, legacyCalcInstrMode;
 
 	private static List<String> fillers;
 
@@ -310,7 +308,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos);
+				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -376,7 +374,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos);
+				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -454,7 +452,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos);
+				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -519,7 +517,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, posSenna);
+					instr = ci.calculateInstructionNumber(words, posSenna, legacyCalcInstrMode);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
@@ -596,7 +594,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, pos);
+					instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
@@ -671,7 +669,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, posSenna);
+					instr = ci.calculateInstructionNumber(words, posSenna, legacyCalcInstrMode);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
