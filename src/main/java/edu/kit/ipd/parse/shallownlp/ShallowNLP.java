@@ -67,6 +67,8 @@ public class ShallowNLP implements IPipelineStage {
 
 	private boolean imp, opt, stanfordOnly, containPeriods, excludeFillers, parseAlternatives;
 
+	boolean legacyCalcInstrMode;
+
 	private static List<String> fillers;
 
 	private WordPosType wordPosList;
@@ -89,6 +91,7 @@ public class ShallowNLP implements IPipelineStage {
 		opt = props.getProperty("MODE").equals("sennaandstanford");
 		stanfordOnly = props.getProperty("MODE").equals("stanford");
 		parseAlternatives = Boolean.parseBoolean(props.getProperty("ALTERNATIVES"));
+		legacyCalcInstrMode = Boolean.parseBoolean(props.getProperty("LEGACY_CALC_INSTR_MODE"));
 		fillers = new ArrayList<String>();
 		if (excludeFillers) {
 			fillers.addAll(Arrays.asList(props.getProperty("FILLERS").split(",")));
