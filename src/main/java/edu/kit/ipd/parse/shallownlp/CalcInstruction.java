@@ -20,6 +20,8 @@ public class CalcInstruction {
 	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally", "when", "afterwards",
 			"then", "later", "thereupon", "whereupon", "hereupon", "as", "previously" });
 
+	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
+
 	/**
 	 * This method calculates the instruction number for each word of the input
 	 * text.
@@ -34,13 +36,12 @@ public class CalcInstruction {
 	 *             throws an exception if word array and pos array have different
 	 *             lengths
 	 */
-	int[] calculateInstructionNumber(String[] words, String[] pos, String[] lemma, boolean legacyCalcInstrMode)
-			throws IllegalArgumentException {
+	int[] calculateInstructionNumber(String[] words, String[] pos, boolean legacyCalcInstrMode) throws IllegalArgumentException {
 		if (words.length == pos.length) {
 			if (legacyCalcInstrMode) {
 				return calculateInstructionNumberLegacy(words, pos);
 			} else {
-				return calculateInstructionNumberAdvanced(words, pos, lemma);
+				return calculateInstructionNumberAdvanced(words, pos);
 			}
 		} else {
 			throw new IllegalArgumentException("word array and pos array have different lengths");
@@ -57,7 +58,7 @@ public class CalcInstruction {
 		return false;
 	}
 
-	private int[] calculateInstructionNumberAdvanced(String[] words, String[] pos, String[] lemma) {
+	private int[] calculateInstructionNumberAdvanced(String[] words, String[] pos) {
 		int[] interInstTags = new int[words.length];
 		int[] resultInstTags = new int[words.length];
 		int currInst = 0;
@@ -74,9 +75,8 @@ public class CalcInstruction {
 			} else {
 				if (pos[i].startsWith("VB")) {
 					verbSeen = true;
-					if (i != 0 && (lemma[i - 1].startsWith("have") || lemma[i - 1].startsWith("be")
-							|| (i > 1 && (pos[i - 1].startsWith("RB") && lemma[i - 2].startsWith("have")))
-							|| (i > 1 && (pos[i - 1].startsWith("RB") && lemma[i - 2].startsWith("be")))
+					if (i != 0 && (haveOrBe.contains(words[i - 1])
+							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1]))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
 							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
 						inVP = true;
@@ -84,7 +84,7 @@ public class CalcInstruction {
 					if (!inVP && !lastVerbVBG) {
 						currInst++;
 						interInstTags[i] = currInst;
-						if (i > 0 && pos[i - 1].startsWith("RB") && !(lemma[i - 1].startsWith("have") || lemma[i - 1].startsWith("be"))) {
+						if (i > 0 && pos[i - 1].startsWith("RB") && !haveOrBe.contains(words[i - 1])) {
 							interInstTags[i - 1] = currInst;
 						}
 					}
