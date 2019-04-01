@@ -22,6 +22,8 @@ public class CalcInstruction {
 
 	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
 
+	private static final List<String> demonstrativePronoun = Arrays.asList("that", "this", "those", "these");
+
 	/**
 	 * This method calculates the instruction number for each word of the input
 	 * text.
@@ -75,40 +77,81 @@ public class CalcInstruction {
 			} else {
 				if (pos[i].startsWith("VB")) {
 					verbSeen = true;
-					if (i != 0 && (haveOrBe.contains(words[i - 1]) || (i > 1
-							&& (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1]))
+					if (i != 0 && (haveOrBe.contains(words[i - 1])
+							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1])))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
-							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB")))))) {
+							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
 						inVP = true;
+					} else {
+						inVP = false;
 					}
-					if (!inVP && !lastVerbVBG) {
-						currInst++;
-						interInstTags[i] = currInst;
-						if (i > 0 && pos[i - 1].startsWith("RB") && !haveOrBe.contains(words[i - 1])) {
-							interInstTags[i - 1] = currInst;
+					if (!inVP) {
+						if (lastVerbVBG && pos[i].startsWith("VBZ")) {
+							interInstTags[i] = currInst;
+							currInst++;
+						} else if (i > 0 && haveOrBe.contains(words[i]) && demonstrativePronoun.contains(words[i - 1])) {
+							if (i < words.length - 1 && pos[i + 1].startsWith("WRB")) {
+								currInst++;
+								interInstTags[i] = currInst;
+								interInstTags[i - 1] = currInst;
+							}
+						} else {
+							currInst++;
+							interInstTags[i] = currInst;
+							if (i > 0 && (pos[i - 1].startsWith("RB") || pos[i - 1].startsWith("MD")) && !haveOrBe.contains(words[i - 1])
+									|| (i > 1 && pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("MD")
+											&& !haveOrBe.contains(words[i - 1]))) {
+								interInstTags[i - 1] = currInst;
+							}
 						}
+
 					}
+
 					if (pos[i].startsWith("VBG")) {
 						lastVerbVBG = true;
+					} else {
+						lastVerbVBG = false;
 					}
+				}
+				if (i > 0 && pos[i].startsWith("PRP") && pos[i - 1].startsWith("NN")) {
+					currInst++;
+					interInstTags[i] = currInst;
 				}
 			}
 		}
 
 		currInst = 0;
 		verbSeen = false;
+		boolean seenVBonly = true, verbAfterWRB = true, seenWRB = false;
 
 		for (int i = 0; i < words.length; i++) {
-			if (i != 0 && verbSeen && interInstTags[i] != interInstTags[i - 1]) {
+
+			if (pos[i].startsWith("WRB")) {
+				seenWRB = true;
+				verbAfterWRB = false;
+			}
+
+			if (i != 0 && verbSeen && verbAfterWRB && interInstTags[i] != interInstTags[i - 1]) {
 				currInst++;
 				verbSeen = false;
+				if (seenVBonly && pos[i - 1].startsWith("PRP")) {
+					resultInstTags[i - 1] = currInst;
+				}
+				seenVBonly = true;
 			}
 			resultInstTags[i] = currInst;
 			if (pos[i].startsWith("VB")) {
 				verbSeen = true;
+				if (seenWRB) {
+					verbAfterWRB = false;
+					seenWRB = false;
+				}
+				if (!pos[i].equals("VB")) {
+					seenVBonly = false;
+				}
 			}
 		}
-		return interInstTags;
+		return resultInstTags;
 	}
 
 	private int[] calculateInstructionNumberLegacy(String[] words, String[] pos) {
