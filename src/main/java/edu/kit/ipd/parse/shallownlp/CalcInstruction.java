@@ -75,10 +75,10 @@ public class CalcInstruction {
 			} else {
 				if (pos[i].startsWith("VB")) {
 					verbSeen = true;
-					if (i != 0 && (haveOrBe.contains(words[i - 1])
-							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1]))
+					if (i != 0 && (haveOrBe.contains(words[i - 1]) || (i > 1
+							&& (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1]))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
-							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
+							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB")))))) {
 						inVP = true;
 					}
 					if (!inVP && !lastVerbVBG) {
