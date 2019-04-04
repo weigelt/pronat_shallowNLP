@@ -102,4 +102,23 @@ public class AdvancedInstructionCalculationTest {
 			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
 		}
 	}
+
+	@Test
+	public void test5() {
+		input = "if you are asked to bring a drink means you have to pour water in a glass that is how you serve a drink";
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		List<String> inputArray = Arrays.asList(input.split(" "));
+		for (int i = 0; i < actual.length; i++) {
+			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber());
+		}
+	}
 }
