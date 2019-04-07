@@ -1,25 +1,22 @@
 package edu.kit.ipd.parse.shallownlp;
 
-import edu.kit.ipd.parse.luna.data.PrePipelineData;
-import edu.kit.ipd.parse.luna.data.token.Token;
-import edu.kit.ipd.parse.luna.graph.IGraph;
-import edu.kit.ipd.parse.luna.tools.ConfigManager;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import edu.kit.ipd.parse.luna.data.token.Token;
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
+
 public class AdvancedInstructionCalculationTest {
 	static ShallowNLP snlp;
 	String input;
 	Token[] actual;
-	IGraph graph;
-	PrePipelineData ppd;
 	private static Properties props;
 
 	@BeforeClass
