@@ -14,9 +14,9 @@ import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
 public class AdvancedInstructionCalculationTest {
-	static ShallowNLP snlp;
-	String input;
-	Token[] actual;
+	private static ShallowNLP snlp;
+	private String input;
+	private Token[] actual;
 	private static Properties props;
 
 	@BeforeClass
