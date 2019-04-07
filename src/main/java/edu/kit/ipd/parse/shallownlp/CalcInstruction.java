@@ -10,6 +10,7 @@ import java.util.List;
  * @author Markus Kocybik
  * @author Tobias Hey - extended Boundary Keywords for temporal Keywords
  *         (2016-07-28)
+ * @author Sebastian Weigelt - advanced instruction number calculation
  */
 public class CalcInstruction {
 	private static final List<String> if_keywords = Arrays.asList(new String[] { "if", "when", "whenever", "unless" });
