@@ -118,4 +118,24 @@ public class AdvancedInstructionCalculationTest {
 			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber());
 		}
 	}
+
+	@Test
+	public void test6() {
+		input = "when greeting someone you need to wave your hand and say hello all while looking the person in the eyes";
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		List<String> inputArray = Arrays.asList(input.split(" "));
+		for (int i = 0; i < actual.length; i++) {
+			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber() + "; " + actual[i].getPos() + "; "
+					+ actual[i].getChunkIOB());
+		}
+	}
 }
