@@ -68,6 +68,9 @@ public class CalcInstruction {
 		boolean verbSeen = false, inVP = false, lastVerbVBGorVBN = false;
 
 		for (int i = 0; i < words.length; i++) {
+			if (words[i].equals("you")) {
+				System.out.println();
+			}
 			interInstTags[i] = currInst;
 			if (isInstructionBoundary(words[i])) {
 				if (verbSeen) {
@@ -144,7 +147,7 @@ public class CalcInstruction {
 			if (pos[i].startsWith("VB")) {
 				verbSeen = true;
 				if (seenWRB) {
-					verbAfterWRB = false;
+					verbAfterWRB = true;
 					seenWRB = false;
 				}
 				if (!pos[i].equals("VB")) {
