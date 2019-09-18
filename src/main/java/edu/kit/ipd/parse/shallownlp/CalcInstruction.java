@@ -65,7 +65,7 @@ public class CalcInstruction {
 		int[] interInstTags = new int[words.length];
 		int[] resultInstTags = new int[words.length];
 		int currInst = 0;
-		boolean verbSeen = false, inVP = false, lastVerbVBG = false;
+		boolean verbSeen = false, inVP = false, lastVerbVBGorVBN = false;
 
 		for (int i = 0; i < words.length; i++) {
 			interInstTags[i] = currInst;
@@ -87,7 +87,7 @@ public class CalcInstruction {
 						inVP = false;
 					}
 					if (!inVP) {
-						if (lastVerbVBG && pos[i].startsWith("VBZ")) {
+						if (lastVerbVBGorVBN && pos[i].startsWith("VBZ")) {
 							interInstTags[i] = currInst;
 							currInst++;
 						} else if (i > 0 && haveOrBe.contains(words[i]) && demonstrativePronoun.contains(words[i - 1])) {
@@ -108,10 +108,10 @@ public class CalcInstruction {
 
 					}
 
-					if (pos[i].startsWith("VBG")) {
-						lastVerbVBG = true;
+					if (pos[i].startsWith("VBG") || pos[i].startsWith("VBN")) {
+						lastVerbVBGorVBN = true;
 					} else {
-						lastVerbVBG = false;
+						lastVerbVBGorVBN = false;
 					}
 				}
 				if (i > 0 && pos[i].startsWith("PRP") && pos[i - 1].startsWith("NN")) {
