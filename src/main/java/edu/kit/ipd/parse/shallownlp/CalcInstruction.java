@@ -53,8 +53,9 @@ public class CalcInstruction {
 	}
 
 	private boolean isInstructionBoundary(String word) {
-		if (word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
-				|| temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
+		if (//word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
+			//|| 
+		temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
 				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase())) {
 			return true;
 		}
@@ -72,7 +73,9 @@ public class CalcInstruction {
 				ifSeen = true;
 			}
 			interInstTags[i] = currInst;
-			if (isInstructionBoundary(words[i])) {
+			if (isInstructionBoundary(words[i]) || ((words[i].toLowerCase().equals("and") || words[i].toLowerCase().equals("or")
+					|| words[i].toLowerCase().equals("but"))
+					&& !(pos[i + 1].equals("DT") || pos[i + 1].startsWith("NN") || pos[i + 1].startsWith("JJ")))) {
 				if (verbSeen) {
 					currInst++;
 					interInstTags[i] = currInst;
