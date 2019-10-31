@@ -173,6 +173,45 @@ public class AdvancedInstructionCalculationTest {
 		}
 	}
 
+	@Test
+	public void test9() {
+		input = "place the orange juice back on the table then go to the window";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1);
+
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
+	@Test
+	public void test10() {
+		input = "take the orange juice from the forth shelf between the water and other juice close the fridge";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
+
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		printActual(input, actual);
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
 	private void printActual(String input, Token[] actual) {
 		List<String> inputArray = Arrays.asList(input.split(" "));
 		for (int i = 0; i < actual.length; i++) {
