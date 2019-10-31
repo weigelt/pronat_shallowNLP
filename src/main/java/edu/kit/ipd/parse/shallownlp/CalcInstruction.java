@@ -19,7 +19,7 @@ public class CalcInstruction {
 			.asList(new String[] { "else", "otherwise", "elseways", "alternatively", "instead", "either", "rather", "oppositely" });
 
 	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally", "when", "afterwards",
-			"then", "later", "thereupon", "whereupon", "hereupon", "as", "previously" });
+			"then", "later", "thereupon", "whereupon", "hereupon", "as", "previously", "while" });
 
 	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
 
@@ -65,24 +65,27 @@ public class CalcInstruction {
 		int[] interInstTags = new int[words.length];
 		int[] resultInstTags = new int[words.length];
 		int currInst = 0;
-		boolean verbSeen = false, inVP = false, lastVerbVBGorVBN = false;
+		boolean verbSeen = false, inVP = false, lastVerbVBGorVBN = false, ifSeen = false;
 
 		for (int i = 0; i < words.length; i++) {
-			if (words[i].equals("you")) {
-				System.out.println();
+			if (if_keywords.contains(words[i].toLowerCase())) {
+				ifSeen = true;
 			}
 			interInstTags[i] = currInst;
 			if (isInstructionBoundary(words[i])) {
 				if (verbSeen) {
 					currInst++;
 					interInstTags[i] = currInst;
+					if (i > 0 && pos[i - 1].startsWith("DT")) {
+						interInstTags[i - 1] = currInst;
+					}
 					verbSeen = false;
 				}
 			} else {
 				if (pos[i].startsWith("VB")) {
 					verbSeen = true;
 					if (i != 0 && (haveOrBe.contains(words[i - 1])
-							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1])))
+							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1].toLowerCase())))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
 							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
 						inVP = true;
@@ -93,6 +96,10 @@ public class CalcInstruction {
 						if (lastVerbVBGorVBN && pos[i].startsWith("VBZ")) {
 							interInstTags[i] = currInst;
 							currInst++;
+						} else if (ifSeen && pos[i].startsWith("VBZ") && !haveOrBe.contains(words[i].toLowerCase())) {
+							interInstTags[i] = currInst;
+							currInst++;
+							ifSeen = false;
 						} else if (i > 0 && haveOrBe.contains(words[i]) && demonstrativePronoun.contains(words[i - 1])) {
 							if (i < words.length - 1 && pos[i + 1].startsWith("WRB")) {
 								currInst++;
@@ -102,9 +109,10 @@ public class CalcInstruction {
 						} else {
 							currInst++;
 							interInstTags[i] = currInst;
-							if (i > 0 && (pos[i - 1].startsWith("RB") || pos[i - 1].startsWith("MD")) && !haveOrBe.contains(words[i - 1])
+							if (i > 0 && (pos[i - 1].startsWith("RB") || pos[i - 1].startsWith("MD"))
+									&& !haveOrBe.contains(words[i - 1].toLowerCase())
 									|| (i > 1 && pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("MD")
-											&& !haveOrBe.contains(words[i - 1]))) {
+											&& !haveOrBe.contains(words[i - 1].toLowerCase()))) {
 								interInstTags[i - 1] = currInst;
 							}
 						}
@@ -138,9 +146,10 @@ public class CalcInstruction {
 			if (i != 0 && verbSeen && verbAfterWRB && interInstTags[i] != interInstTags[i - 1]) {
 				currInst++;
 				verbSeen = false;
-				if (seenVBonly && pos[i - 1].startsWith("PRP")) {
-					resultInstTags[i - 1] = currInst;
-				}
+				//TODO: Was that ever helpful? I doubt it!
+				//				if (seenVBonly && pos[i - 1].startsWith("PRP")) {
+				//					resultInstTags[i - 1] = currInst;
+				//				}
 				seenVBonly = true;
 			}
 			resultInstTags[i] = currInst;
@@ -164,7 +173,7 @@ public class CalcInstruction {
 		int verbCounter = 0;
 		for (int i = 0; i < words.length; i++) {
 
-			if (isInstructionBoundary(words[i])) {
+			if (isInstructionBoundary(words[i].toLowerCase())) {
 				// no verb in between boundaries resets instructionNumber
 				// and extends previous instruction
 				if (verbCounter == 0) {
