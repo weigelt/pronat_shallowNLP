@@ -103,6 +103,7 @@ public class AdvancedInstructionCalculationTest {
 	@Test
 	public void test5() {
 		input = "if you are asked to bring a drink means you have to pour water in a glass that is how you serve a drink";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2);
 		try {
 			actual = snlp.parse(input, null);
 		} catch (IOException e) {
@@ -112,16 +113,15 @@ public class AdvancedInstructionCalculationTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		List<String> inputArray = Arrays.asList(input.split(" "));
 		for (int i = 0; i < actual.length; i++) {
-			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber());
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
 		}
 	}
 
 	@Test
 	public void test6() {
 		input = "when greeting someone you need to wave your hand and say hello all while looking the person in the eyes";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3);
 		try {
 			actual = snlp.parse(input, null);
 		} catch (IOException e) {
@@ -131,7 +131,49 @@ public class AdvancedInstructionCalculationTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
 
+	@Test
+	public void test7() {
+		input = "if it is closed please open it";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1);
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
+	@Test
+	public void test8() {
+		input = "go to the table grab the green cup turn and go to the dishwasher if it is closed please open it find a free place put the green cup into it and close the dishwasher";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 7,
+				7, 8, 8, 8, 8);
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
+	private void printActual(String input, Token[] actual) {
 		List<String> inputArray = Arrays.asList(input.split(" "));
 		for (int i = 0; i < actual.length; i++) {
 			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber() + "; " + actual[i].getPos() + "; "
