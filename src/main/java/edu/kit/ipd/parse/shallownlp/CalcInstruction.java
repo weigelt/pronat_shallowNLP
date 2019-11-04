@@ -75,7 +75,8 @@ public class CalcInstruction {
 			interInstTags[i] = currInst;
 			if (isInstructionBoundary(words[i]) || ((words[i].toLowerCase().equals("and") || words[i].toLowerCase().equals("or")
 					|| words[i].toLowerCase().equals("but"))
-					&& !(pos[i + 1].equals("DT") || pos[i + 1].startsWith("NN") || pos[i + 1].startsWith("JJ")))) {
+					&& !(pos[i + 1].equals("DT") || pos[i + 1].startsWith("NN") || pos[i + 1].startsWith("JJ")
+							|| pos[i + 1].startsWith("CD")))) {
 				if (verbSeen) {
 					currInst++;
 					interInstTags[i] = currInst;
@@ -91,15 +92,19 @@ public class CalcInstruction {
 							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1].toLowerCase())))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
 							|| (i > 0 && (pos[i].equals("VBG") && pos[i - 1].equals("VB")))
-							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
+							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB")))
+							|| (i > 2 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("PRP") && pos[i - 3].startsWith("VB"))))) {
 						inVP = true;
 					} else {
 						inVP = false;
 					}
 					if (!inVP) {
 						if (lastVerbVBGorVBN && pos[i].startsWith("VBZ")) {
-							interInstTags[i] = currInst;
-							currInst++;
+							if (!((i < words.length - 1 && pos[i + 1].startsWith("TO"))
+									|| (i < words.length - 2 && pos[i + 2].startsWith("TO")))) {
+								interInstTags[i] = currInst;
+								currInst++;
+							}
 						} else if (ifSeen && pos[i].startsWith("VBZ") && !haveOrBe.contains(words[i].toLowerCase())) {
 							interInstTags[i] = currInst;
 							currInst++;
