@@ -90,6 +90,7 @@ public class CalcInstruction {
 					if (i != 0 && (haveOrBe.contains(words[i - 1])
 							|| (i > 1 && (pos[i - 1].startsWith("RB") && haveOrBe.contains(words[i - 1].toLowerCase())))
 							|| (i > 1 && (pos[i - 1].startsWith("TO") && pos[i - 2].startsWith("VB")))
+							|| (i > 0 && (pos[i].equals("VBG") && pos[i - 1].equals("VB")))
 							|| (i > 2 && (pos[i - 1].startsWith("RB") && pos[i - 2].startsWith("TO") && pos[i - 3].startsWith("VB"))))) {
 						inVP = true;
 					} else {
