@@ -212,6 +212,26 @@ public class AdvancedInstructionCalculationTest {
 		}
 	}
 
+	@Test
+	public void test11() {
+		input = "start washing the dishes and then put them into the cupboard";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1);
+
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		printActual(input, actual);
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
 	private void printActual(String input, Token[] actual) {
 		List<String> inputArray = Arrays.asList(input.split(" "));
 		for (int i = 0; i < actual.length; i++) {
