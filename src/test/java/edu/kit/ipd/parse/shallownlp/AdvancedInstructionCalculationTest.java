@@ -206,7 +206,6 @@ public class AdvancedInstructionCalculationTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		printActual(input, actual);
 		for (int i = 0; i < actual.length; i++) {
 			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
 		}
@@ -226,7 +225,45 @@ public class AdvancedInstructionCalculationTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		printActual(input, actual);
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
+	@Test
+	public void test12() {
+		input = "setting a table for two requires you to locate two plates two glasses two knifes and two forks from the cupboard put the plates separately on the table then place a fork on the left of each plate a knife on the right of each plate and a glass behind each knife";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2,
+				2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
+
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < actual.length; i++) {
+			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
+		}
+	}
+
+	@Test
+	public void test13() {
+		input = "can you bring some beverage from the fridge in kitchen counter pour thr beverage into a glass then hang it over me";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2);
+
+		try {
+			actual = snlp.parse(input, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		for (int i = 0; i < actual.length; i++) {
 			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
 		}
