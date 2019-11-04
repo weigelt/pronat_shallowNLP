@@ -32,126 +32,49 @@ public class AdvancedInstructionCalculationTest {
 	public void testVBG_VBZ_And_To_Inf() {
 		input = "serving a drink for someone means you have to put water in a glass and bring it to me";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test2() {
 		input = "if you are asked to bring a drink you have to pour water in a glass that is how you serve a drink";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test3() {
 		input = "to bring coffee you must turn the machine on";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 1, 1, 1, 1, 1, 1);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test4() {
 		input = "to set the table you have to bring forks and put them carefully in the cupboard";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test5() {
 		input = "if you are asked to bring a drink means you have to pour water in a glass that is how you serve a drink";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test6() {
 		input = "when greeting someone you need to wave your hand and say hello all while looking the person in the eyes";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test7() {
 		input = "if it is closed please open it";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
@@ -159,75 +82,28 @@ public class AdvancedInstructionCalculationTest {
 		input = "go to the table grab the green cup turn and go to the dishwasher if it is closed please open it find a free place put the green cup into it and close the dishwasher";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 7,
 				7, 8, 8, 8, 8);
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test9() {
 		input = "place the orange juice back on the table then go to the window";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1);
-
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test10() {
 		input = "take the orange juice from the forth shelf between the water and other juice close the fridge";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1);
-
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test11() {
 		input = "start washing the dishes and then put them into the cupboard";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1);
-
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
@@ -235,26 +111,24 @@ public class AdvancedInstructionCalculationTest {
 		input = "setting a table for two requires you to locate two plates two glasses two knifes and two forks from the cupboard put the plates separately on the table then place a fork on the left of each plate a knife on the right of each plate and a glass behind each knife";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2,
 				2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
-
-		try {
-			actual = snlp.parse(input, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (int i = 0; i < actual.length; i++) {
-			Assert.assertEquals(expectedInst.get(i).longValue(), actual[i].getInstructionNumber());
-		}
+		check(input, expectedInst);
 	}
 
 	@Test
 	public void test13() {
 		input = "can you bring some beverage from the fridge in kitchen counter pour thr beverage into a glass then hang it over me";
 		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2);
+		check(input, expectedInst);
+	}
 
+	@Test
+	public void test14() {
+		input = "okay Armar when someone enters the room I want you to make eye contact with them wave your hand side to side and clearly say hello";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3);
+		check(input, expectedInst);
+	}
+
+	private void check(String input, List<Integer> expectedInst) {
 		try {
 			actual = snlp.parse(input, null);
 		} catch (IOException e) {
