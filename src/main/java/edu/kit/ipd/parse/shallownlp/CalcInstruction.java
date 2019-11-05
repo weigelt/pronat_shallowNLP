@@ -13,13 +13,13 @@ import java.util.List;
  * @author Sebastian Weigelt - advanced instruction number calculation
  */
 public class CalcInstruction {
-	private static final List<String> if_keywords = Arrays.asList(new String[] { "if", "when", "whenever", "unless" });
-	private static final List<String> then_keywords = Arrays.asList(new String[] { "then" });
-	private static final List<String> else_keywords = Arrays
-			.asList(new String[] { "else", "otherwise", "elseways", "alternatively", "instead", "either", "rather", "oppositely" });
+	private static final List<String> if_keywords = Arrays.asList("if", "when", "whenever", "unless");
+	private static final List<String> then_keywords = Arrays.asList("then");
+	private static final List<String> else_keywords = Arrays.asList("else", "otherwise", "elseways", "alternatively", "instead", "either",
+			"rather", "oppositely");
 
-	private static final List<String> temporal_keywords = Arrays.asList(new String[] { "before", "after", "finally", "when", "afterwards",
-			"then", "later", "thereupon", "whereupon", "hereupon", "as", "previously", "while" });
+	private static final List<String> temporal_keywords = Arrays.asList("before", "after", "finally", "when", "afterwards", "then", "later",
+			"thereupon", "whereupon", "hereupon", "as", "previously", "while");
 
 	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
 
@@ -39,7 +39,7 @@ public class CalcInstruction {
 	 *             throws an exception if word array and pos array have different
 	 *             lengths
 	 */
-	int[] calculateInstructionNumber(String[] words, String[] pos, boolean legacyCalcInstrMode) throws IllegalArgumentException {
+	int[] calculateInstructionNumber(String[] words, String[] pos, boolean legacyCalcInstrMode) {
 		if (words.length == pos.length) {
 			if (legacyCalcInstrMode) {
 				return calculateInstructionNumberLegacy(words, pos);
@@ -53,30 +53,36 @@ public class CalcInstruction {
 	}
 
 	private boolean isInstructionBoundary(String word) {
-		if (//word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
-			//|| 
-		temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
-				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase())) {
-			return true;
-		}
-		return false;
+		return temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
+				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase());
+		//OLD:
+		//if (//word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
+		//|| 
+		//		temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
+		//				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase())) {
+		//			return true;
+		//		}
+		//		return false;
 	}
 
 	private int[] calculateInstructionNumberAdvanced(String[] words, String[] pos) {
 		int[] interInstTags = new int[words.length];
 		int[] resultInstTags = new int[words.length];
 		int currInst = 0;
-		boolean verbSeen = false, inVP = false, lastVerbVBGorVBN = false, ifSeen = false;
+		boolean verbSeen = false;
+		boolean inVP = false;
+		boolean lastVerbVBGorVBN = false;
+		boolean ifSeen = false;
 
 		for (int i = 0; i < words.length; i++) {
 			if (if_keywords.contains(words[i].toLowerCase())) {
 				ifSeen = true;
 			}
 			interInstTags[i] = currInst;
-			if (isInstructionBoundary(words[i]) || ((words[i].toLowerCase().equals("and") || words[i].toLowerCase().equals("or")
-					|| words[i].toLowerCase().equals("but"))
-					&& !(pos[i + 1].equals("DT") || pos[i + 1].startsWith("NN") || pos[i + 1].startsWith("JJ")
-							|| pos[i + 1].startsWith("CD")))) {
+			if (isInstructionBoundary(words[i])
+					|| ((words[i].equalsIgnoreCase("and") || words[i].equalsIgnoreCase("or") || words[i].equalsIgnoreCase("but"))
+							&& !(pos[i + 1].equals("DT") || pos[i + 1].startsWith("NN") || pos[i + 1].startsWith("JJ")
+									|| pos[i + 1].startsWith("CD")))) {
 				if (verbSeen) {
 					currInst++;
 					interInstTags[i] = currInst;
@@ -150,7 +156,9 @@ public class CalcInstruction {
 
 		currInst = 0;
 		verbSeen = false;
-		boolean seenVBonly = true, verbAfterWRB = true, seenWRB = false;
+		//boolean seenVBonly = true;
+		boolean verbAfterWRB = true;
+		boolean seenWRB = false;
 
 		for (int i = 0; i < words.length; i++) {
 
@@ -166,7 +174,7 @@ public class CalcInstruction {
 				//				if (seenVBonly && pos[i - 1].startsWith("PRP")) {
 				//					resultInstTags[i - 1] = currInst;
 				//				}
-				seenVBonly = true;
+				//seenVBonly = true;
 			}
 			resultInstTags[i] = currInst;
 			if (pos[i].startsWith("VB")) {
@@ -175,9 +183,9 @@ public class CalcInstruction {
 					verbAfterWRB = true;
 					seenWRB = false;
 				}
-				if (!pos[i].equals("VB")) {
-					seenVBonly = false;
-				}
+				//				if (!pos[i].equals("VB")) {
+				//					seenVBonly = false;
+				//				}
 			}
 		}
 		return resultInstTags;
