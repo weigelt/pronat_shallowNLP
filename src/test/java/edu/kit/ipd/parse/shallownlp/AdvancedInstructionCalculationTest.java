@@ -153,10 +153,27 @@ public class AdvancedInstructionCalculationTest {
 	@Test
 	public void test16() {
 		input = "robo go to the dishwasher and open it until the dishwasher is empty take an item from the dishwasher and put it into the cupboard";
-		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4);
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4);
+		computeActual(input);
+		check(expectedInst);
+	}
+
+	//TODO: Fix me!
+	@Test
+	public void test17() {
+		input = "put it in the cupboard repeat this until the dishwasher is empty";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4);
 		computeActual(input);
 		printActual();
-		//check(expectedInst);
+		//		check(expectedInst);
+	}
+
+	@Test
+	public void test18() {
+		input = "if it is closed please open the window";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1);
+		computeActual(input);
+		check(expectedInst);
 	}
 
 	private void computeActual(String input) {
