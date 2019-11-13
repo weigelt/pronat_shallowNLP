@@ -13,7 +13,7 @@ import java.util.List;
  * @author Sebastian Weigelt - advanced instruction number calculation
  */
 public class CalcInstruction {
-	private static final List<String> if_keywords = Arrays.asList("if", "when", "whenever", "unless");
+	private static final List<String> if_keywords = Arrays.asList("if", "when", "whenever", "unless", "until");
 	private static final List<String> then_keywords = Arrays.asList("then");
 	private static final List<String> else_keywords = Arrays.asList("else", "otherwise", "elseways", "alternatively", "instead", "either",
 			"rather", "oppositely");
