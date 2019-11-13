@@ -1,7 +1,10 @@
 package edu.kit.ipd.parse.shallownlp;
 
+import edu.kit.ipd.parse.luna.tools.ConfigManager;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * This class contains the heuristic to calculate the instruction number for
@@ -13,6 +16,9 @@ import java.util.List;
  * @author Sebastian Weigelt - advanced instruction number calculation
  */
 public class CalcInstruction {
+
+	private Properties props;
+
 	private static final List<String> if_keywords = Arrays.asList("if", "when", "whenever", "unless", "until");
 	private static final List<String> then_keywords = Arrays.asList("then");
 	private static final List<String> else_keywords = Arrays.asList("else", "otherwise", "elseways", "alternatively", "instead", "either",
@@ -24,6 +30,13 @@ public class CalcInstruction {
 	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
 
 	private static final List<String> demonstrativePronoun = Arrays.asList("that", "this", "those", "these");
+
+	private boolean legacyCalcInstrMode = false;
+
+	public CalcInstruction() {
+		props = ConfigManager.getConfiguration(getClass());
+		legacyCalcInstrMode = Boolean.parseBoolean(props.getProperty("LEGACY_CALC_INSTR_MODE"));
+	}
 
 	/**
 	 * This method calculates the instruction number for each word of the input
@@ -39,7 +52,7 @@ public class CalcInstruction {
 	 *             throws an exception if word array and pos array have different
 	 *             lengths
 	 */
-	int[] calculateInstructionNumber(String[] words, String[] pos, boolean legacyCalcInstrMode) {
+	int[] calculateInstructionNumber(String[] words, String[] pos) {
 		if (words.length == pos.length) {
 			if (legacyCalcInstrMode) {
 				return calculateInstructionNumberLegacy(words, pos);

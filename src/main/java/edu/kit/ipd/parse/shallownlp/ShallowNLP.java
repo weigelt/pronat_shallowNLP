@@ -173,9 +173,8 @@ public class ShallowNLP implements IPipelineStage {
 	}
 
 	/**
-	 * This method parses multiple Hypotheses as batch. A hypothesis is a list
-	 * of Strings. The result is a list of tagged hypotheses (List<List
-	 * <String>>)
+	 * This method parses multiple Hypotheses as batch. A hypothesis is a list of
+	 * Strings. The result is a list of tagged hypotheses (List<List <String>>)
 	 *
 	 * @param hypotheses
 	 *            the hypotheses to process
@@ -254,9 +253,6 @@ public class ShallowNLP implements IPipelineStage {
 	/**
 	 * This method realizes the pos tagging with SENNA.
 	 *
-	 * @param imp
-	 *            is true if the text is composed of imperative sentences, then
-	 *            the instruction number can be calculated
 	 * @param tempFile
 	 * @return a token array which is the result of parsing
 	 * @throws IOException
@@ -308,7 +304,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
+				instr = ci.calculateInstructionNumber(words, pos);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -323,9 +319,8 @@ public class ShallowNLP implements IPipelineStage {
 	 * This method realizes the pos tagging with Stanford.
 	 *
 	 * @param list
-	 *            fix list of words which should be tagged as verbs is only used
-	 *            if the parameter opt is true
-	 * @param tempFile
+	 *            fix list of words which should be tagged as verbs is only used if
+	 *            the parameter opt is true
 	 * @return a token array which is the result of parsing
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -374,7 +369,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
+				instr = ci.calculateInstructionNumber(words, pos);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -389,12 +384,9 @@ public class ShallowNLP implements IPipelineStage {
 	/**
 	 * This method realizes the pos tagging with SENNA.
 	 *
-	 * @param imp
-	 *            is true if the text is composed of imperative sentences, then
-	 *            the instruction number can be calculated
 	 * @param list
-	 *            fix list of words which should be tagged as verbs is only used
-	 *            if the parameter opt is true
+	 *            fix list of words which should be tagged as verbs is only used if
+	 *            the parameter opt is true
 	 * @param tempFile
 	 * @return a token array which is the result of parsing
 	 * @throws IOException
@@ -452,7 +444,7 @@ public class ShallowNLP implements IPipelineStage {
 		int[] instr = new int[words.length];
 		if (imp) {
 			try {
-				instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
+				instr = ci.calculateInstructionNumber(words, pos);
 			} catch (final IllegalArgumentException e) {
 				logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 				Arrays.fill(instr, -1);
@@ -517,7 +509,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, posSenna, legacyCalcInstrMode);
+					instr = ci.calculateInstructionNumber(words, posSenna);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
@@ -536,7 +528,6 @@ public class ShallowNLP implements IPipelineStage {
 	/**
 	 * This method realizes the batched pos tagging with Stanford.
 	 *
-	 * @param tempFile
 	 * @return A List of Token-Arrays which is the result of batched parsing
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -594,7 +585,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, pos, legacyCalcInstrMode);
+					instr = ci.calculateInstructionNumber(words, pos);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
@@ -669,7 +660,7 @@ public class ShallowNLP implements IPipelineStage {
 			int[] instr = new int[words.length];
 			if (imp) {
 				try {
-					instr = ci.calculateInstructionNumber(words, posSenna, legacyCalcInstrMode);
+					instr = ci.calculateInstructionNumber(words, posSenna);
 				} catch (final IllegalArgumentException e) {
 					logger.error("Cannot calculate instruction number, instruction number is set to -1", e);
 					Arrays.fill(instr, -1);
@@ -733,7 +724,7 @@ public class ShallowNLP implements IPipelineStage {
 	 *            the pos tags for each word
 	 * @param instr
 	 *            the calculation number of each word
-	 * @param chunks
+	 * @param chunksIOB
 	 *            the IOB-chunk of each word
 	 * @return the result of parsing as token array
 	 */
@@ -842,8 +833,7 @@ public class ShallowNLP implements IPipelineStage {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * edu.kit.ipd.parse.luna.pipeline.IPipelineStage#exec(edu.kit.ipd.parse
+	 * @see edu.kit.ipd.parse.luna.pipeline.IPipelineStage#exec(edu.kit.ipd.parse
 	 * .luna.data.AbstractPipelineData)
 	 */
 	@Override
