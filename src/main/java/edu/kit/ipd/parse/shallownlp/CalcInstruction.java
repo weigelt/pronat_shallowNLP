@@ -17,26 +17,26 @@ import java.util.Properties;
  */
 public class CalcInstruction {
 
-	private Properties props;
+	private static Properties props = ConfigManager.getConfiguration(CalcInstruction.class);
 
-	private static final List<String> if_keywords = Arrays.asList("if", "when", "whenever", "unless", "until");
-	private static final List<String> then_keywords = Arrays.asList("then");
-	private static final List<String> else_keywords = Arrays.asList("else", "otherwise", "elseways", "alternatively", "instead", "either",
-			"rather", "oppositely");
+	private static final String PROP_LEGACY_CALC_INSTR_MODE = "LEGACY_CALC_INSTR_MODE";
+	private static final String PROP_LOOP_KEYWORDS = "LOOP_KEYWORDS";
+	private static final String PROP_IF_KEYWORDS = "IF_KEYWORDS";
+	private static final String PROP_THEN_KEYWORDS = "THEN_KEYWORDS";
+	private static final String PROP_ELSE_KEYWORDS = "ELSE_KEYWORDS";
+	private static final String PROP_TEMPORAL_KEYWORDS = "TEMPORAL_KEYWORDS";
 
-	private static final List<String> temporal_keywords = Arrays.asList("before", "after", "finally", "when", "afterwards", "then", "later",
-			"thereupon", "whereupon", "hereupon", "as", "previously", "while");
+	private static final List<String> ifKeywords = Arrays.asList(props.getProperty(PROP_IF_KEYWORDS).split(","));
+	private static final List<String> thenKeywords = Arrays.asList(props.getProperty(PROP_THEN_KEYWORDS).split(","));
+	private static final List<String> elseKeywords = Arrays.asList(props.getProperty(PROP_ELSE_KEYWORDS).split(","));
+	private static final List<String> loopKeywords = Arrays.asList(props.getProperty(PROP_LOOP_KEYWORDS).split(","));
+	private static final List<String> temporalKeywords = Arrays.asList(props.getProperty(PROP_TEMPORAL_KEYWORDS).split(","));
+
+	private static boolean legacyCalcInstrMode = Boolean.parseBoolean(props.getProperty(PROP_LEGACY_CALC_INSTR_MODE));
 
 	private static final List<String> haveOrBe = Arrays.asList("have", "has", "had", "is", "am", "are", "been", "was", "were");
 
 	private static final List<String> demonstrativePronoun = Arrays.asList("that", "this", "those", "these");
-
-	private boolean legacyCalcInstrMode = false;
-
-	public CalcInstruction() {
-		props = ConfigManager.getConfiguration(getClass());
-		legacyCalcInstrMode = Boolean.parseBoolean(props.getProperty("LEGACY_CALC_INSTR_MODE"));
-	}
 
 	/**
 	 * This method calculates the instruction number for each word of the input
@@ -66,8 +66,9 @@ public class CalcInstruction {
 	}
 
 	private boolean isInstructionBoundary(String word) {
-		return temporal_keywords.contains(word.toLowerCase()) || if_keywords.contains(word.toLowerCase())
-				|| then_keywords.contains(word.toLowerCase()) || else_keywords.contains(word.toLowerCase());
+		return temporalKeywords.contains(word.toLowerCase()) || ifKeywords.contains(word.toLowerCase())
+				|| thenKeywords.contains(word.toLowerCase()) || elseKeywords.contains(word.toLowerCase())
+				|| loopKeywords.contains(word.toLowerCase());
 		//OLD:
 		//if (//word.toLowerCase().equals("and") || word.toLowerCase().equals("or") || word.toLowerCase().equals("but")
 		//|| 
@@ -88,7 +89,7 @@ public class CalcInstruction {
 		boolean ifSeen = false;
 
 		for (int i = 0; i < words.length; i++) {
-			if (if_keywords.contains(words[i].toLowerCase())) {
+			if (ifKeywords.contains(words[i].toLowerCase())) {
 				ifSeen = true;
 			}
 			interInstTags[i] = currInst;
