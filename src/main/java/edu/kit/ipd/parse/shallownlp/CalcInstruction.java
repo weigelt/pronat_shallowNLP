@@ -92,6 +92,10 @@ public class CalcInstruction {
 					verbSeen = false;
 				}
 			} else {
+				if (i < words.length - 1 && i > 0 && pos[i].startsWith("PRP") && pos[i + 1].startsWith("TO") && pos[i - 1].startsWith("VBZ")
+						&& currInst > 0) {
+					interInstTags[i] = currInst - 1;
+				}
 				if (pos[i].startsWith("VB")) {
 					verbSeen = true;
 					if (i != 0 && (haveOrBe.contains(words[i - 1])
@@ -107,7 +111,7 @@ public class CalcInstruction {
 					if (!inVP) {
 						if (lastVerbVBGorVBN && pos[i].startsWith("VBZ")) {
 							if (!((i < words.length - 1 && pos[i + 1].startsWith("TO"))
-									|| (i < words.length - 2 && pos[i + 2].startsWith("TO") && pos[i + 1].startsWith("PRP"))
+									//									|| (i < words.length - 2 && pos[i + 2].startsWith("TO") && pos[i + 1].startsWith("PRP"))
 									|| (i < words.length - 2 && pos[i + 2].startsWith("PRP") && !pos[i + 1].startsWith("VB"))
 									|| (i < words.length - 3 && pos[i + 3].startsWith("PRP") && !pos[i + 1].startsWith("VB")
 											&& !pos[i + 2].startsWith("VB")))) {
