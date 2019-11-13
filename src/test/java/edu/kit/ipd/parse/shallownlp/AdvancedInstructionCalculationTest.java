@@ -150,6 +150,15 @@ public class AdvancedInstructionCalculationTest {
 		check(expectedInst);
 	}
 
+	@Test
+	public void test16() {
+		input = "robo go to the dishwasher and open it until the dishwasher is empty take an item from the dishwasher and put it into the cupboard";
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4);
+		computeActual(input);
+		printActual();
+		//check(expectedInst);
+	}
+
 	private void computeActual(String input) {
 		try {
 			actual = snlp.parse(input, null);
@@ -168,10 +177,9 @@ public class AdvancedInstructionCalculationTest {
 		}
 	}
 
-	private void printActual(String input) {
-		List<String> inputArray = Arrays.asList(input.split(" "));
+	private void printActual() {
 		for (int i = 0; i < actual.length; i++) {
-			System.out.println(inputArray.get(i) + "; " + actual[i].getInstructionNumber() + "; " + actual[i].getPos() + "; "
+			System.out.println(actual[i].getWord() + "; " + actual[i].getInstructionNumber() + "; " + actual[i].getPos() + "; "
 					+ actual[i].getChunkIOB());
 		}
 	}
