@@ -100,7 +100,7 @@ public class CalcInstruction {
 				if (verbSeen) {
 					currInst++;
 					interInstTags[i] = currInst;
-					if (i > 0 && pos[i - 1].startsWith("DT")) {
+					if (i > 0 && pos[i - 1].startsWith("DT") && !demonstrativePronoun.contains(words[i - 1].toLowerCase())) {
 						interInstTags[i - 1] = currInst;
 					}
 					verbSeen = false;
@@ -123,9 +123,10 @@ public class CalcInstruction {
 						inVP = false;
 					}
 					if (!inVP) {
+						//if (!(i > 0 && interInstTags[i - 1] != currInst)) {
 						if (lastVerbVBGorVBN && pos[i].startsWith("VBZ")) {
 							if (!((i < words.length - 1 && pos[i + 1].startsWith("TO"))
-									//									|| (i < words.length - 2 && pos[i + 2].startsWith("TO") && pos[i + 1].startsWith("PRP"))
+									//										|| (i < words.length - 2 && pos[i + 2].startsWith("TO") && pos[i + 1].startsWith("PRP"))
 									|| (i < words.length - 2 && pos[i + 2].startsWith("PRP") && !pos[i + 1].startsWith("VB"))
 									|| (i < words.length - 3 && pos[i + 3].startsWith("PRP") && !pos[i + 1].startsWith("VB")
 											&& !pos[i + 2].startsWith("VB")))) {
@@ -156,7 +157,7 @@ public class CalcInstruction {
 								interInstTags[i - 1] = currInst;
 							}
 						}
-
+						//}
 					}
 
 					if (pos[i].startsWith("VBG") || pos[i].startsWith("VBN")) {

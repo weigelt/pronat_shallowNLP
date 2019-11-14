@@ -158,14 +158,12 @@ public class AdvancedInstructionCalculationTest {
 		check(expectedInst);
 	}
 
-	//TODO: Fix me!
 	@Test
 	public void test17() {
 		input = "put it in the cupboard repeat this until the dishwasher is empty";
-		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4);
+		List<Integer> expectedInst = Arrays.asList(0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2);
 		computeActual(input);
-		printActual();
-		//		check(expectedInst);
+		check(expectedInst);
 	}
 
 	@Test
@@ -199,5 +197,9 @@ public class AdvancedInstructionCalculationTest {
 			System.out.println(actual[i].getWord() + "; " + actual[i].getInstructionNumber() + "; " + actual[i].getPos() + "; "
 					+ actual[i].getChunkIOB());
 		}
+	}
+
+	private void printActualInstructions() {
+		Arrays.stream(actual).forEach(e -> System.out.print(e.getInstructionNumber() + ","));
 	}
 }
