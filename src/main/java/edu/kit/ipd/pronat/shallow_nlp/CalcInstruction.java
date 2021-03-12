@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 

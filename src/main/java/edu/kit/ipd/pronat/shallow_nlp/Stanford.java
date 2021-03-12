@@ -1,12 +1,12 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
+import edu.kit.ipd.pronat.prepipedatamodel.token.Token;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.SentenceUtils;
 import edu.stanford.nlp.ling.TaggedWord;
@@ -19,6 +19,7 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
  *
  * @author Markus Kocybik
  * @author Tobias Hey - MaxentTagger only loaded once (2016-07-28)
+ * @author Sebastian Weigelt
  */
 public class Stanford {
 
@@ -28,7 +29,7 @@ public class Stanford {
 
 	Stanford() {
 		props = ConfigManager.getConfiguration(getClass());
-		tagger = new MaxentTagger(this.getClass().getResourceAsStream(props.getProperty("TAGGER_MODEL")));
+		tagger = new MaxentTagger(getClass().getResourceAsStream(props.getProperty("TAGGER_MODEL")));
 		morph = new Morphology();
 	}
 

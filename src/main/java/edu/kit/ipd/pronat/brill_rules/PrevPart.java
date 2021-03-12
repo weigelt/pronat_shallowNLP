@@ -1,43 +1,43 @@
 /**
  *
  */
-package edu.kit.ipd.parse.brillRules;
+package edu.kit.ipd.pronat.brill_rules;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a {@link IConditionPart} checking attributes of words succeeding
+ * Represents a {@link IConditionPart} checking attributes of words preceeding
  * the current word
  *
  * @author Tobias Hey
  *
  */
-public class NextPart implements IConditionPart {
+public class PrevPart implements IConditionPart {
 
 	private enum Types {
 		POS("POS"), CHUNK("CHUNK"), WORD("WORD");
+
 		private final String op;
 
 		private Types(String op) {
 			this.op = op;
-		};
+		}
 
 		@Override
 		public String toString() {
 
-			return this.op;
+			return op;
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(NextPart.class);
+	private static final Logger logger = LoggerFactory.getLogger(PrevPart.class);
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * edu.kit.ipd.parse.brillRules.IConditionPart#checkPart(java.lang.String,
-	 * java.lang.String[], java.lang.String[], java.lang.String[], int)
+	 * @see IConditionPart#checkPart(java.lang.String, java.lang.String[],
+	 * java.lang.String[], java.lang.String[], int)
 	 */
 	@Override
 	public boolean checkPart(String part, String[] words, String[] posTags, String[] chunks, int currIndex) {
@@ -48,12 +48,11 @@ public class NextPart implements IConditionPart {
 				index = Integer.parseInt(parts[1]);
 				String type = parts[2];
 				String expected = parts[3];
-				int i = currIndex + index;
-				if (i < words.length) {
-
+				int i = currIndex - index;
+				if (i >= 0) {
 					//skip interjections
-					if (posTags[i].equalsIgnoreCase("UH") && i + 1 < words.length) {
-						i++;
+					if (posTags[i].equalsIgnoreCase("UH") && i - 1 >= 0) {
+						i--;
 					}
 					if (type.equalsIgnoreCase(Types.POS.toString())) {
 						if (posTags[i].equalsIgnoreCase(expected)) {
@@ -68,23 +67,23 @@ public class NextPart implements IConditionPart {
 							return true;
 						}
 					} else {
-						logger.warn("Next part of condition is not defined correctly (Type must be POS, CHUNK or WORD). Ignore Part");
+						logger.warn("Previous part of condition is not defined correctly (Type must be POS, CHUNK or WORD). Ignore Part");
 					}
 				}
 			} catch (NumberFormatException e) {
-				logger.warn("Next part of condition is not defined correctly (index must be second argument). Ignore Part");
+				logger.warn("Previous part of condition is not defined correctly (index must be second argument). Ignore Part");
 				return false;
 			}
 		} else {
 			logger.warn(
-					"Next part of condition is not defined correctly (Next parts must consist of at least NEXT_N_TYPE_xx). Ignore Part");
+					"Previous part of condition is not defined correctly (Previous parts must consist of at least PREV_N_TYPE_xx). Ignore Part");
 		}
 		return false;
 	}
 
 	@Override
 	public boolean isPartOfType(String part) {
-		if (part.startsWith("NEXT")) {
+		if (part.startsWith("PREV")) {
 			return true;
 		}
 		return false;

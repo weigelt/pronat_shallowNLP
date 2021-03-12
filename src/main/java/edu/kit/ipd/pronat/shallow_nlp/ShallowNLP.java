@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,23 +9,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import edu.kit.ipd.pronat.prepipedatamodel.PrePipelineData;
+import edu.kit.ipd.pronat.prepipedatamodel.token.*;
 import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.brillRules.ChunkRule;
-import edu.kit.ipd.parse.brillRules.IRule;
-import edu.kit.ipd.parse.brillRules.POSRule;
+import edu.kit.ipd.pronat.brill_rules.ChunkRule;
+import edu.kit.ipd.pronat.brill_rules.IRule;
+import edu.kit.ipd.pronat.brill_rules.POSRule;
 import edu.kit.ipd.parse.luna.data.AbstractPipelineData;
 import edu.kit.ipd.parse.luna.data.MissingDataException;
 import edu.kit.ipd.parse.luna.data.PipelineDataCastException;
-import edu.kit.ipd.parse.luna.data.PrePipelineData;
-import edu.kit.ipd.parse.luna.data.token.Chunk;
-import edu.kit.ipd.parse.luna.data.token.ChunkIOB;
-import edu.kit.ipd.parse.luna.data.token.MainHypothesisToken;
-import edu.kit.ipd.parse.luna.data.token.POSTag;
-import edu.kit.ipd.parse.luna.data.token.Token;
-import edu.kit.ipd.parse.luna.data.token.WordPosType;
 import edu.kit.ipd.parse.luna.graph.IArc;
 import edu.kit.ipd.parse.luna.graph.IArcType;
 import edu.kit.ipd.parse.luna.graph.IGraph;
@@ -36,15 +31,16 @@ import edu.kit.ipd.parse.luna.graph.ParseNode;
 import edu.kit.ipd.parse.luna.pipeline.IPipelineStage;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
-import edu.kit.ipd.parse.parsebios.Facade;
-import edu.kit.ipd.parse.senna_wrapper.Senna;
-import edu.kit.ipd.parse.senna_wrapper.WordSennaResult;
+import edu.kit.ipd.pronat.parse_bios.Facade;
+import edu.kit.ipd.pronat.senna_wrapper.Senna;
+import edu.kit.ipd.pronat.senna_wrapper.WordSennaResult;
 
 /**
  * This class represents the API to use this project. The goal of this project
  * is to parse an input text to an AGG-Graph. To use this project create an
- * object of this class and excecute one of the parse methods.
+ * object of this class and execute one of the parse methods.
  *
+ * @author Sebastian Weigelt
  * @author Markus Kocybik
  *
  */
@@ -843,7 +839,7 @@ public class ShallowNLP implements IPipelineStage {
 
 		// try to get data as pre pipeline data. If this fails, return
 		try {
-			prePipeData = data.asPrePipelineData();
+			prePipeData = (PrePipelineData) data.asPrePipelineData();
 		} catch (final PipelineDataCastException e) {
 			logger.error("Cannot process on data - PipelineData unreadable", e);
 			throw new PipelineStageException(e);

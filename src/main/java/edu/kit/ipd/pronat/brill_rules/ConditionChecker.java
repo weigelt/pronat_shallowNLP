@@ -1,7 +1,7 @@
 /**
  *
  */
-package edu.kit.ipd.parse.brillRules;
+package edu.kit.ipd.pronat.brill_rules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +29,16 @@ public class ConditionChecker {
 
 	private enum BooleanOperators {
 		AND("AND"), OR("OR"), NOT("NOT"), XOR("XOR");
+
 		private final String op;
 
 		private BooleanOperators(String op) {
 			this.op = op;
-		};
+		}
 
 		@Override
 		public String toString() {
-			return this.op;
+			return op;
 		}
 	}
 

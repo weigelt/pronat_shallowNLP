@@ -1,7 +1,7 @@
 /**
  *
  */
-package edu.kit.ipd.parse.brillRules;
+package edu.kit.ipd.pronat.brill_rules;
 
 /**
  * This interface represents all possible brill rules
@@ -12,8 +12,8 @@ package edu.kit.ipd.parse.brillRules;
 public interface IRule {
 
 	/**
-	 * Applies this rule on the word with the specified index according to the
-	 * given words, postags and chunks .
+	 * Applies this rule on the word with the specified index according to the given
+	 * words, postags and chunks .
 	 *
 	 * @param words
 	 *            The word Array

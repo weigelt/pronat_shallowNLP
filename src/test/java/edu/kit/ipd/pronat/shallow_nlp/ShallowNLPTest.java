@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import edu.kit.ipd.parse.senna_wrapper.WordSennaResult;
+import edu.kit.ipd.pronat.senna_wrapper.WordSennaResult;
 
 public class ShallowNLPTest {
 

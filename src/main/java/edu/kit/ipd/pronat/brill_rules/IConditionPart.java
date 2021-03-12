@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.brillRules;
+package edu.kit.ipd.pronat.brill_rules;
 
 /**
  * This interface represents possible parts that can be defined in the condition
@@ -10,8 +10,8 @@ package edu.kit.ipd.parse.brillRules;
 public interface IConditionPart {
 
 	/**
-	 * Checks if the given textual representation of a part of a condition
-	 * belongs to this type of part
+	 * Checks if the given textual representation of a part of a condition belongs
+	 * to this type of part
 	 *
 	 * @param part
 	 * @return

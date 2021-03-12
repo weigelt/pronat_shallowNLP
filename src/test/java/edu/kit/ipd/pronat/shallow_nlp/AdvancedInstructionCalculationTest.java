@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -6,13 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import edu.kit.ipd.pronat.prepipedatamodel.token.Token;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
+/**
+ * @author Sebastian Weigelt
+ */
 public class AdvancedInstructionCalculationTest {
 	private static ShallowNLP snlp;
 	private String input;

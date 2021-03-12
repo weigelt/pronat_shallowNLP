@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.brillRules;
+package edu.kit.ipd.pronat.brill_rules;
 
 import java.util.Properties;
 
@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
-import edu.kit.ipd.parse.shallownlp.Stanford;
+import edu.kit.ipd.pronat.shallow_nlp.Stanford;
 
 /**
  *

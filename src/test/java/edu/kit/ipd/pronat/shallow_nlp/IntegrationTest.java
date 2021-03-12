@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.shallownlp;
+package edu.kit.ipd.pronat.shallow_nlp;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,18 +9,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import edu.kit.ipd.pronat.prepipedatamodel.PrePipelineData;
+import edu.kit.ipd.pronat.prepipedatamodel.token.HypothesisTokenType;
+import edu.kit.ipd.pronat.prepipedatamodel.token.MainHypothesisToken;
+import edu.kit.ipd.pronat.prepipedatamodel.token.Token;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.kit.ipd.parse.luna.data.MissingDataException;
-import edu.kit.ipd.parse.luna.data.PrePipelineData;
-import edu.kit.ipd.parse.luna.data.token.HypothesisTokenType;
-import edu.kit.ipd.parse.luna.data.token.MainHypothesisToken;
-import edu.kit.ipd.parse.luna.data.token.Token;
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.pipeline.PipelineStageException;
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
+/**
+ * @author Sebastian Weigelt
+ */
 public class IntegrationTest {
 
 	static ShallowNLP snlp;
